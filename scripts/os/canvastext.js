@@ -190,9 +190,23 @@ CanvasTextFunctions.draw = function(ctx,font,size,x,y,str)
     return total;
 };
 
+CanvasTextFunctions.drawBackspace = function(ctx,size,x,y)
+{
+    var total = 0;
+
+    ctx.save();
+
+    ctx.fillStyle = "#DFDBC3";
+    ctx.fillRect(x, (y - size + 1), (size + 2), (size + 3));
+
+    ctx.restore();
+    return total;
+};
+
 CanvasTextFunctions.enable = function(ctx) 
 {
     ctx.drawText = function(font,size,x,y,text) { return CanvasTextFunctions.draw( ctx, font,size,x,y,text); };
+    ctx.backspace = function(size,x,y) { return CanvasTextFunctions.drawBackspace(ctx,size,x,y); };
     ctx.measureText = function(font,size,text) { return CanvasTextFunctions.measure( font,size,text); };
     ctx.fontAscent = function(font,size) { return CanvasTextFunctions.ascent(font,size); };
     ctx.fontDescent = function(font,size) { return CanvasTextFunctions.descent(font,size); };

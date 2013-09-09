@@ -41,8 +41,14 @@ function CLIconsole() {
                // The enter key marks the end of a console command, so ...
                // ... tell the shell ...
                _OsShell.handleInput(this.buffer);
+
                // ... and reset our buffer.
                this.buffer = "";
+           }
+           else if (chr == String.fromCharCode(127))
+           {
+               this.eraseText(this.buffer.charAt(this.buffer.length - 1));
+               this.buffer = this.buffer.substring(0, this.buffer.length - 1);
            }
            // TODO: Write a case for Ctrl-C.
            else
@@ -70,6 +76,18 @@ function CLIconsole() {
            var offset = _DrawingContext.measureText(this.CurrentFont, this.CurrentFontSize, text);
            this.CurrentXPosition = this.CurrentXPosition + offset;
        }
+    };
+
+    this.eraseText = function(text)
+    {
+        if (text !== "")
+        {
+            var offset = _DrawingContext.measureText(this.CurrentFont, this.CurrentFontSize, text);
+            // Draw the text at the current X and Y coordinates.
+            _DrawingContext.backspace(this.CurrentFontSize, this.CurrentXPosition - offset, this.CurrentYPosition);
+            // Move the current X position.
+            this.CurrentXPosition = this.CurrentXPosition - offset;
+        }
     };
 
     this.advanceLine = function() {

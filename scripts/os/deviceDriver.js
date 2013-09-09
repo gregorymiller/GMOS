@@ -7,7 +7,7 @@
 function DeviceDriver()
 {
     // Base Attributes
-    this.version = "0.07";
+    this.version = "1.0";
     this.status = "unloaded";
     this.preemptable = false;
     // this.queue = new Queue();     // TODO: We will eventually want a queue for, well, queueing requests for this device to be handled by deferred procedure calls (DPCs).

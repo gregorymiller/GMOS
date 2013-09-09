@@ -28,7 +28,9 @@ function shellInit() {
     sc = new ShellCommand();
     sc.command = "ver";
     sc.description = "- Displays the current version data.";
-    sc.function = shellVer;
+    sc.function = function() {
+        _StdOut.putText(APP_NAME + " version " + APP_VERSION);
+    }
     this.commandList[this.commandList.length] = sc;
     
     // help
@@ -78,6 +80,30 @@ function shellInit() {
     sc.command = "prompt";
     sc.description = "<string> - Sets the prompt.";
     sc.function = shellPrompt;
+    this.commandList[this.commandList.length] = sc;
+
+    // date
+    sc = new ShellCommand();
+    sc.command = "date";
+    sc.description = "- displays the current date and time";
+    sc.function = function() {
+        var currentDate = new Date();
+        _StdOut.putText("" + (currentDate.getMonth()+1) + "/"
+                       + currentDate.getDate() + "/"
+                       + currentDate.getFullYear() + " "
+                       + currentDate.getHours() + ":"
+                       + currentDate.getMinutes() + ":"
+                       + currentDate.getSeconds());
+    }
+    this.commandList[this.commandList.length] = sc;
+
+    // whereami
+    sc = new ShellCommand();
+    sc.command = "whereami";
+    sc.description = "- displays the users current location";
+    sc.function = function() {
+        _StdOut.putText("If I knew I would certainly tell you")
+    };
     this.commandList[this.commandList.length] = sc;
 
     // processes - list the running processes and their IDs
@@ -254,11 +280,6 @@ function shellApology()
    } else {
       _StdIn.putText("For what?");
    }
-}
-
-function shellVer(args)
-{
-    _StdIn.putText(APP_NAME + " version " + APP_VERSION);    
 }
 
 function shellHelp(args)
