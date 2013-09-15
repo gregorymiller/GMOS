@@ -106,6 +106,23 @@ function shellInit() {
     };
     this.commandList[this.commandList.length] = sc;
 
+    // load
+    sc = new ShellCommand();
+    sc.command = "load";
+    sc.description = "- loads user program";
+    sc.function = function() {
+        var userProgram = document.getElementById("taProgramInput");
+        var userText = userProgram.value;
+
+        var pattern = /[^0-9a-fA-F\s]/;
+
+        if (userText.search(pattern) != -1)
+        {
+            _StdOut.putText("Not valid program text");
+        }
+    };
+    this.commandList[this.commandList.length] = sc;
+
     // processes - list the running processes and their IDs
     // kill <id> - kills the specified process id.
 

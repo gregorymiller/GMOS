@@ -49,11 +49,51 @@ function krnKbdDispatchKeyPress(params)
     }    
     else if ( ((keyCode >= 48) && (keyCode <= 57)) ||   // digits 
                (keyCode == 32)                     ||   // space
-               (keyCode == 13)                     ||   // enter
-               (keyCode == 61)                     ||   // equal sign
-               (keyCode == 44) )                        // Testing
+               (keyCode == 13) )                        // enter
     {
         chr = String.fromCharCode(keyCode);
+
+        if (isShifted && keyCode == 48)          // right parentheses
+        {
+            chr = String.fromCharCode(41);
+        }
+        else if (isShifted && keyCode == 49)    // exclamation point
+        {
+            chr = String.fromCharCode(33);
+        }
+        else if (isShifted && keyCode == 50)    // at symbol
+        {
+            chr = String.fromCharCode(64);
+        }
+        else if (isShifted && keyCode == 51)    // pound sign
+        {
+            chr = String.fromCharCode(35);
+        }
+        else if (isShifted && keyCode == 52)    // dollar sign
+        {
+            chr = String.fromCharCode(36);
+        }
+        else if (isShifted && keyCode == 53)    // percent sign
+        {
+            chr = String.fromCharCode(37);
+        }
+        else if (isShifted && keyCode == 54)    // circumflex accent
+        {
+            chr = String.fromCharCode(94);
+        }
+        else if (isShifted && keyCode == 55)    // and symbol
+        {
+            chr = String.fromCharCode(38);
+        }
+        else if (isShifted && keyCode == 56)    // asterisk
+        {
+            chr = String.fromCharCode(42);
+        }
+        else if (isShifted && keyCode == 57)    // left parentheses
+        {
+            chr = String.fromCharCode(40);
+        }
+
         _KernelInputQueue.enqueue(chr); 
     }
     else if ( keyCode == 59 )                         // semicolon and colon
@@ -67,17 +107,27 @@ function krnKbdDispatchKeyPress(params)
 
         _KernelInputQueue.enqueue(chr);
     }
-    else if ( keyCode == 188 )    // Works but gross
+    else if ( keyCode == 188 )    // comma and less than
     {
        chr = String.fromCharCode(44);
+
+       if (isShifted)
+       {
+           chr = String.fromCharCode(60);
+       }
        _KernelInputQueue.enqueue(chr);
     }
-    else if ( keyCode == 190 )    // Works but gross
+    else if ( keyCode == 190 )    // period and greater than
     {
         chr = String.fromCharCode(46);
+
+        if (isShifted)
+        {
+            chr = String.fromCharCode(62);
+        }
         _KernelInputQueue.enqueue(chr);
     }
-    else if ( keyCode == 222 )    // Works but gross
+    else if ( keyCode == 222 )    // single and double quote
     {
         chr = String.fromCharCode(39);
 
@@ -87,9 +137,79 @@ function krnKbdDispatchKeyPress(params)
         }
         _KernelInputQueue.enqueue(chr);
     }
-    else if ( keyCode == 8 )
+    else if ( keyCode == 8 )    // backspace
     {
         chr = String.fromCharCode(127);
+        _KernelInputQueue.enqueue(chr);
+    }
+    else if ( keyCode == 38 )   // up arrow
+    {
+        chr = String.fromCharCode(2191);
+        _KernelInputQueue.enqueue(chr);
+    }
+    else if ( keyCode == 40 )   // down arrow
+    {
+        chr = String.fromCharCode(2193);
+        _KernelInputQueue.enqueue(chr);
+    }
+    else if ( keyCode == 191 )  // forward slash and question mark
+    {
+        chr = String.fromCharCode(47);
+
+        if (isShifted)
+        {
+            chr = String.fromCharCode(63);
+        }
+        _KernelInputQueue.enqueue(chr);
+    }
+    else if ( keyCode == 219 )  // open bracket and curly brace
+    {
+        chr = String.fromCharCode(91);
+
+        if (isShifted)
+        {
+            chr = String.fromCharCode(123);
+        }
+        _KernelInputQueue.enqueue(chr);
+    }
+    else if ( keyCode == 221 )  // close bracket and curly brace
+    {
+        chr = String.fromCharCode(93);
+
+        if (isShifted)
+        {
+            chr = String.fromCharCode(125);
+        }
+        _KernelInputQueue.enqueue(chr);
+    }
+    else if ( keyCode == 220 )  // backslash and vertical bar
+    {
+        chr = String.fromCharCode(92);
+
+        if (isShifted)
+        {
+            chr = String.fromCharCode(124);
+        }
+        _KernelInputQueue.enqueue(chr);
+    }
+    else if ( keyCode == 61 )  // equal and addition sign
+    {
+        chr = String.fromCharCode(keyCode);
+
+        if (isShifted)
+        {
+            chr = String.fromCharCode(43);
+        }
+        _KernelInputQueue.enqueue(chr);
+    }
+    else if ( keyCode == 173 )  // hyphen and underscore
+    {
+        chr = String.fromCharCode(45);
+
+        if (isShifted)
+        {
+            chr = String.fromCharCode(95);
+        }
         _KernelInputQueue.enqueue(chr);
     }
 }

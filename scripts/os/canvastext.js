@@ -197,7 +197,7 @@ CanvasTextFunctions.drawBackspace = function(ctx,size,x,y)
     ctx.save();
 
     ctx.fillStyle = "#DFDBC3";
-    ctx.fillRect(x, (y - size + 1), (size + 2), (size + 3));
+    ctx.fillRect(x, (y - size), (size + 2), (size + 5));
 
     ctx.restore();
     return total;

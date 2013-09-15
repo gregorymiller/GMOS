@@ -14,6 +14,8 @@ function CLIconsole() {
     this.CurrentXPosition = 0;
     this.CurrentYPosition = _DefaultFontSize;
     this.buffer = "";
+    this.commandsEntered = [];
+    var commandPosition = 0;
     
     // Methods
     this.init = function() {
@@ -31,6 +33,7 @@ function CLIconsole() {
     };
 
     this.handleInput = function() {
+
        while (_KernelInputQueue.getSize() > 0)
        {
            // Get the next character from the kernel input queue.
@@ -41,7 +44,8 @@ function CLIconsole() {
                // The enter key marks the end of a console command, so ...
                // ... tell the shell ...
                _OsShell.handleInput(this.buffer);
-
+               this.commandsEntered.push(this.buffer);
+               commandPosition = this.commandsEntered.length;
                // ... and reset our buffer.
                this.buffer = "";
            }
@@ -49,6 +53,51 @@ function CLIconsole() {
            {
                this.eraseText(this.buffer.charAt(this.buffer.length - 1));
                this.buffer = this.buffer.substring(0, this.buffer.length - 1);
+           }
+           else if (chr == String.fromCharCode(2191))
+           {
+               commandPosition--;
+
+               if(commandPosition < 0)
+               {
+                   commandPosition = this.commandsEntered.length - 1;
+               }
+
+               for (var i = this.buffer.length - 1; i > -1; i--)
+               {
+                   this.eraseText(this.buffer.charAt(i));
+                   this.buffer = this.buffer.substring(0, i);
+               }
+               this.buffer = "";
+
+               var newCommand = this.commandsEntered[commandPosition];
+               for (i = 0; i < newCommand.length; i++)
+               {
+                   this.putText(newCommand.charAt(i));
+                   this.buffer += newCommand.charAt(i);
+               }
+           }
+           else if (chr == String.fromCharCode(2193))
+           {
+               commandPosition++;
+               if (commandPosition >= (this.commandsEntered.length))
+               {
+                   commandPosition = 0;
+               }
+
+               for (var i = this.buffer.length - 1; i > -1; i--)
+               {
+                   this.eraseText(this.buffer.charAt(i));
+                   this.buffer = this.buffer.substring(0, i);
+               }
+               this.buffer = "";
+
+               var newCommand = this.commandsEntered[commandPosition];
+               for (i = 0; i < newCommand.length; i++)
+               {
+                   this.putText(newCommand.charAt(i));
+                   this.buffer += newCommand.charAt(i);
+               }
            }
            // TODO: Write a case for Ctrl-C.
            else
