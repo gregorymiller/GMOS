@@ -96,7 +96,7 @@ function krnKbdDispatchKeyPress(params)
 
         _KernelInputQueue.enqueue(chr); 
     }
-    else if ( keyCode == 59 )                         // semicolon and colon
+    else if ( keyCode == 59 )                   // semicolon and colon
     {
         chr = String.fromCharCode(keyCode);
 
@@ -211,5 +211,12 @@ function krnKbdDispatchKeyPress(params)
             chr = String.fromCharCode(95);
         }
         _KernelInputQueue.enqueue(chr);
+    }
+    else
+    {
+        if (!isShifted)
+        {
+            krnTrapError("Invalid key press");
+        }
     }
 }

@@ -85,7 +85,7 @@ function shellInit() {
     // date
     sc = new ShellCommand();
     sc.command = "date";
-    sc.description = "- displays the current date and time";
+    sc.description = "- displays the current date and time.";
     sc.function = function() {
         var currentDate = new Date();
         _StdOut.putText("" + (currentDate.getMonth()+1) + "/"
@@ -100,16 +100,16 @@ function shellInit() {
     // whereami
     sc = new ShellCommand();
     sc.command = "whereami";
-    sc.description = "- displays the users current location";
+    sc.description = "- displays the users current location.";
     sc.function = function() {
-        _StdOut.putText("If I knew I would certainly tell you")
+        _StdOut.putText("At the keyboard silly.");
     };
     this.commandList[this.commandList.length] = sc;
 
     // load
     sc = new ShellCommand();
     sc.command = "load";
-    sc.description = "- loads user program";
+    sc.description = "- loads user program.";
     sc.function = function() {
         var userProgram = document.getElementById("taProgramInput");
         var userText = userProgram.value;
@@ -120,8 +120,74 @@ function shellInit() {
         {
             _StdOut.putText("Not valid program text");
         }
+        else
+        {
+            _StdOut.putText("Program loaded correctly");
+        }
     };
     this.commandList[this.commandList.length] = sc;
+
+    // status
+    sc = new ShellCommand();
+    sc.command = "status";
+    sc.description = "<string> - display <string> in footer of the page.";
+    sc.function = function(args) {
+        var footerElement = document.getElementById("status");
+        if (args.length > 0)
+        {
+            var text = "";
+            for (var i = 0; i < args.length; i++) {
+                text += "" + args[i] + " ";
+            }
+            footerElement.innerHTML = text;
+        }
+        else
+        {
+            _StdOut.putText("Usage: load <string>  Please supply a string.");
+        }
+    };
+    this.commandList[this.commandList.length] = sc;
+
+    // Crash the OS
+    sc = new ShellCommand();
+    sc.command = "crash...everything";
+    sc.description = "- crash the OS.";
+    sc.function = function() {
+        krnTrapError("User");
+    };
+    this.commandList[this.commandList.length] = sc;
+
+    // Open url
+    sc = new ShellCommand();
+    sc.command = "openurl";
+    sc.description = "<url> - opens specified url";
+    sc.function = function(args) {
+        var pattern = /(ftp|http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/;
+
+        if (args.length > 0)
+        {
+            var text = "";
+            for (var i = 0; i < args.length; i++) {
+                text += "" + args[i] + "";
+            }
+
+            if (text.search(pattern) < 0)
+            {
+                _StdOut.putText("Not a valid url");
+            }
+            else
+            {
+                window.open(text, "_blank");
+            }
+        }
+        else
+        {
+            _StdOut.putText("Usage: openurl <url>  Please supply a string.");
+        }
+    };
+    this.commandList[this.commandList.length] = sc;
+
+
 
     // processes - list the running processes and their IDs
     // kill <id> - kills the specified process id.
@@ -299,13 +365,18 @@ function shellApology()
    }
 }
 
+// Fixed so that the text will wrap like other text
 function shellHelp(args)
 {
-    _StdIn.putText("Commands:");
+    _StdOut.putText("Commands:");
     for (var i in _OsShell.commandList)
     {
-        _StdIn.advanceLine();
-        _StdIn.putText("  " + _OsShell.commandList[i].command + " " + _OsShell.commandList[i].description);
+        _StdOut.advanceLine();
+        _StdOut.putText("  " + _OsShell.commandList[i].command + " ");
+        for (var letter = 0; letter < _OsShell.commandList[i].description.length; letter++)
+        {
+            _StdOut.putText(_OsShell.commandList[i].description.charAt(letter));
+        }
     }    
 }
 

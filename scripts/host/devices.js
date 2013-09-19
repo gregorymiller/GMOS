@@ -26,6 +26,14 @@ function hostClockPulse()
    _OSclock++;
    // Call the kernel clock pulse event handler.
    krnOnCPUClockPulse();
+   // Display current date and time in the status bar
+   var currentDateAndTime = new Date();
+   document.getElementById("dateAndTime").innerHTML = "" + (currentDateAndTime.getMonth() + 1) + "/"
+                                                         + currentDateAndTime.getDate() + "/"
+                                                         + currentDateAndTime.getFullYear() + " "
+                                                         + currentDateAndTime.getHours() + ":"
+                                                         + currentDateAndTime.getMinutes() + ":"
+                                                         + currentDateAndTime.getSeconds();
 }
 
 

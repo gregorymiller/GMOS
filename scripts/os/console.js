@@ -49,12 +49,12 @@ function CLIconsole() {
                // ... and reset our buffer.
                this.buffer = "";
            }
-           else if (chr == String.fromCharCode(127))
+           else if (chr == String.fromCharCode(127))        // Handles backspace
            {
                this.eraseText(this.buffer.charAt(this.buffer.length - 1));
                this.buffer = this.buffer.substring(0, this.buffer.length - 1);
            }
-           else if (chr == String.fromCharCode(2191))
+           else if (chr == String.fromCharCode(2191))       // Cycle up through the commands entered
            {
                commandPosition--;
 
@@ -77,7 +77,7 @@ function CLIconsole() {
                    this.buffer += newCommand.charAt(i);
                }
            }
-           else if (chr == String.fromCharCode(2193))
+           else if (chr == String.fromCharCode(2193))       // Cycle down through the commands entered
            {
                commandPosition++;
                if (commandPosition >= (this.commandsEntered.length))
@@ -120,9 +120,15 @@ function CLIconsole() {
        if (text !== "")
        {
            // Draw the text at the current X and Y coordinates.
-           _DrawingContext.drawText(this.CurrentFont, this.CurrentFontSize, this.CurrentXPosition, this.CurrentYPosition, text);
-         // Move the current X position.
+
+           // Move the current X position.
            var offset = _DrawingContext.measureText(this.CurrentFont, this.CurrentFontSize, text);
+
+           if((this.CurrentXPosition + offset) >= _Canvas.width)
+           {
+               this.advanceLine();
+           }
+           _DrawingContext.drawText(this.CurrentFont, this.CurrentFontSize, this.CurrentXPosition, this.CurrentYPosition, text);
            this.CurrentXPosition = this.CurrentXPosition + offset;
        }
     };
@@ -142,6 +148,12 @@ function CLIconsole() {
     this.advanceLine = function() {
        this.CurrentXPosition = 0;
        this.CurrentYPosition += _DefaultFontSize + _FontHeightMargin;
-       // TODO: Handle scrolling.
+
+       if (this.CurrentYPosition >= _Canvas.height)
+       {
+           this.clearScreen();
+           this.CurrentYPosition = 0;
+           this.CurrentYPosition += _DefaultFontSize + _FontHeightMargin;
+       }
     };
 }

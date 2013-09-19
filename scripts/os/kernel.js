@@ -185,6 +185,17 @@ function krnTrace(msg)
 function krnTrapError(msg)
 {
     hostLog("OS ERROR - TRAP: " + msg);
-    // TODO: Display error on console, perhaps in some sort of colored screen. (Perhaps blue?)
+    // Display error on console
+    _Console.clearScreen();
+    _Console.resetXY();
+
+    _DrawingContext.fillStyle = "#6495ED";
+    _DrawingContext.fillRect(0, 0, _Canvas.width, _Canvas.height);
+
+    _StdOut.putText("Congratulations you crashed everything");
+    _Console.advanceLine();
+    _StdOut.putText("OS ERROR REASON: " + msg);
+
     krnShutdown();
+    clearInterval(_hardwareClockID);
 }
