@@ -189,9 +189,15 @@ function krnTrapError(msg)
     _Console.clearScreen();
     _Console.resetXY();
 
+    // Scroll to the top
+    var canvasDiv = document.getElementById("divConsole");
+    canvasDiv.scrollTop = 0;
+
+    // Repaint the Canvas
     _DrawingContext.fillStyle = "#6495ED";
     _DrawingContext.fillRect(0, 0, _Canvas.width, _Canvas.height);
 
+    // Display message and reason for error
     _StdOut.putText("Congratulations you crashed everything");
     _Console.advanceLine();
     _StdOut.putText("OS ERROR REASON: " + msg);

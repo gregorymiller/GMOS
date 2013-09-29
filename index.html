@@ -63,12 +63,18 @@
              onclick="hostBtnReset_click(this);">
    </div>
 
-   <div id="divConsole" style="margin:4px; width:500px; height:500px; float:left;">
-      <canvas id="display"
-              width="500px"
-              height="500px"
-              tabindex="3">
-      </canvas>
+   <div id="wrapper">
+       <div id="divConsole">
+          <canvas id="display"
+                  width="500px"
+                  height="500px"
+                  tabindex="3">
+          </canvas>
+       </div>
+
+       <div id="divMemoryDisplay">
+           <label> Memory Display </label>
+       </div>
    </div>
 
    <div id="divLog" style="margin-left:520px;">
@@ -95,23 +101,42 @@
       </label>
    </div>
 
+   <div id="divCPUDisplay" style="margin-left:535px;">
+           <table border="1" style="table-layout:fixed; width:150px;">
+               <thead>CPU</thead>
+               <col width="75">
+               <col width="75">
+               <tr>
+                   <td>PC</td>
+                   <td id="CPUPC"></td>
+               </tr>
+               <tr>
+                   <td>ACC</td>
+                   <td id="CPUACC"></td>
+               </tr>
+               <tr>
+                   <td>X</td>
+                   <td id="CPUX"></td>
+               </tr>
+               <tr>
+                   <td>Y</td>
+                   <td id="CPUY"></td>
+               </tr>
+               <tr>
+                   <td>Z</td>
+                   <td id="CPUZ"></td>
+               </tr>
+           </table>
+   </div>
+
    <div id="footerBar">
        <span id="dateAndTime">
-       test
+
        </span>
        <span id="status">
 
        </span>
    </div>
 </div>
-
-<p class="footerText" style="clear:both;">
-   <br>
-   Copyright &copy; 2008 - 2013 No Rights Reserved.
-   <br>
-   Reproduction is prohibited without the express written consent of
-   Ted Codd, Stevie Ray Vaughan, and Ian Fleming.
-</p>
-
 </body>
 </html>

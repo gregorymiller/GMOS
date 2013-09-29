@@ -28,12 +28,7 @@ function hostClockPulse()
    krnOnCPUClockPulse();
    // Display current date and time in the status bar
    var currentDateAndTime = new Date();
-   document.getElementById("dateAndTime").innerHTML = "" + (currentDateAndTime.getMonth() + 1) + "/"
-                                                         + currentDateAndTime.getDate() + "/"
-                                                         + currentDateAndTime.getFullYear() + " "
-                                                         + currentDateAndTime.getHours() + ":"
-                                                         + currentDateAndTime.getMinutes() + ":"
-                                                         + currentDateAndTime.getSeconds();
+   document.getElementById("dateAndTime").innerHTML =  currentDateAndTime.toLocaleString();
 }
 
 

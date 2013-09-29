@@ -149,11 +149,20 @@ function CLIconsole() {
        this.CurrentXPosition = 0;
        this.CurrentYPosition += _DefaultFontSize + _FontHeightMargin;
 
-       if (this.CurrentYPosition >= _Canvas.height)
+       if ((this.CurrentYPosition +  _DefaultFontSize + _FontHeightMargin) >= _Canvas.height)
        {
-           this.clearScreen();
-           this.CurrentYPosition = 0;
-           this.CurrentYPosition += _DefaultFontSize + _FontHeightMargin;
+           // Create a temporary canvas to save the drawn data
+           var tempCanvas = _DrawingContext.getImageData(0, 0, _Canvas.width, _Canvas.height);
+
+           // Increase the height of the canvas
+           _Canvas.height += (_DefaultFontSize + _FontHeightMargin);
+
+           // Scroll the div with the canvas
+           var canvasDiv = document.getElementById("divConsole");
+           canvasDiv.scrollTop = canvasDiv.scrollHeight;
+
+           // Repaint
+           _DrawingContext.putImageData(tempCanvas, 0, 0);
        }
     };
 }

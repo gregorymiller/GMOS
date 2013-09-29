@@ -46,7 +46,8 @@ function krnKbdDispatchKeyPress(params)
         }
         // TODO: Check for caps-lock and handle as shifted if so.
         _KernelInputQueue.enqueue(chr);        
-    }    
+    }
+    // Added keyboard support for Firefox and Chrome
     else if ( ((keyCode >= 48) && (keyCode <= 57)) ||   // digits 
                (keyCode == 32)                     ||   // space
                (keyCode == 13) )                        // enter
@@ -96,13 +97,13 @@ function krnKbdDispatchKeyPress(params)
 
         _KernelInputQueue.enqueue(chr); 
     }
-    else if ( keyCode == 59 )                   // semicolon and colon
+    else if ( keyCode == 59 || keyCode == 186) // semicolon and colon
     {
-        chr = String.fromCharCode(keyCode);
+        chr = String.fromCharCode(59);
 
         if (isShifted)
         {
-            chr = String.fromCharCode(keyCode - 1);
+            chr = String.fromCharCode(58);
         }
 
         _KernelInputQueue.enqueue(chr);
@@ -192,9 +193,9 @@ function krnKbdDispatchKeyPress(params)
         }
         _KernelInputQueue.enqueue(chr);
     }
-    else if ( keyCode == 61 )  // equal and addition sign
+    else if ( keyCode == 61 || keyCode == 187 )  // equal and addition sign
     {
-        chr = String.fromCharCode(keyCode);
+        chr = String.fromCharCode(61);
 
         if (isShifted)
         {
@@ -202,7 +203,7 @@ function krnKbdDispatchKeyPress(params)
         }
         _KernelInputQueue.enqueue(chr);
     }
-    else if ( keyCode == 173 )  // hyphen and underscore
+    else if ( keyCode == 173 || keyCode == 189 )  // hyphen and underscore
     {
         chr = String.fromCharCode(45);
 
@@ -212,11 +213,12 @@ function krnKbdDispatchKeyPress(params)
         }
         _KernelInputQueue.enqueue(chr);
     }
+    else if ( keyCode == 16 )   // shift key
+    {
+
+    }
     else
     {
-        if (!isShifted)
-        {
-            krnTrapError("Invalid key press");
-        }
+        krnTrace("NOT VALID - Key code:" + keyCode + " shifted:" + isShifted);
     }
 }

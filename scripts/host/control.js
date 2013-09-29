@@ -34,14 +34,13 @@ function hostInit()
 	document.getElementById("taLog").value="";
 
 	// Set focus on the start button.
-   document.getElementById("btnStartOS").focus();
+    document.getElementById("btnStartOS").focus();
 
    // Check for our testing and enrichment core.
    if (typeof Glados === "function") {
       _GLaDOS = new Glados();
       _GLaDOS.init();
    };
-
 }
 
 function hostLog(msg, source)
@@ -86,6 +85,9 @@ function hostBtnStartOS_click(btn)
     _CPU = new Cpu();
     _CPU.init();
 
+    // Set status
+    document.getElementById("status").innerHTML = "Running";
+
     // ... then set the host clock pulse ...
     _hardwareClockID = setInterval(hostClockPulse, CPU_CLOCK_INTERVAL);
     // .. and call the OS Kernel Bootstrap routine.
@@ -96,6 +98,10 @@ function hostBtnHaltOS_click(btn)
 {
     hostLog("emergency halt", "host");
     hostLog("Attempting Kernel shutdown.", "host");
+
+    // Set status
+    document.getElementById("status").innerHTML = "Shutdown";
+
     // Call the OS shutdown routine.
     krnShutdown();
     // Stop the JavaScript interval that's simulating our clock pulse.

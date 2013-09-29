@@ -1,23 +1,23 @@
 /* alanbbos.css */
 
 body {
-   background: #909193 url(images/linen.png) repeat;
-   font-family: Helvetica, Verdana, Arial, sans-serif;
+    background: #FFFFFF;
+    font-family: Helvetica, Verdana, Arial, sans-serif;
 	font-size: 12pt;
 	font-weight: normal;
 	font-style: normal;
 }
 
 h1 {
-   color: black;
+    color: black;
 	font-size: 24pt;
 	font-weight: normal;
 	font-style: normal;	
-   border-bottom: 1px solid black;
+    border-bottom: 1px solid black;
 }
 
 h2 {
-   color: black;
+    color: black;
 	font-size: 20pt;
 	font-weight: normal;
 	font-style: normal;
@@ -30,21 +30,26 @@ h3 {
 	font-style: normal;	
 }
 
+#wrapper {
+    float: left;
+}
+
+#divConsole {
+    border: 2px solid black;
+    margin:4px;
+    width:523px;
+    height:523px;
+    overflow-y:auto;
+}
+
 #display {
-	background-color:#DFDBC3;
-	border: 2px solid red; 
+	background-color:#FFFFFF;
 	cursor: default;
+    outline: none;
 }
 
 .normal_button {
 	width: 100px;
-}
-
-.footerText {
-   color: black;
-   font-family: Arial, Helvetica, sans-serif;
-	font-size: 8pt;
-   text-align: center;
 }
 
 #footerBar {
@@ -53,5 +58,6 @@ h3 {
     bottom: 0;
     width: 100%;
     height: 35px;
-    background: #DFDBC3;
+    background: #FFFFFF;
+    border-top: 1px solid black;
 }

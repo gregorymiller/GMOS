@@ -88,12 +88,7 @@ function shellInit() {
     sc.description = "- displays the current date and time.";
     sc.function = function() {
         var currentDate = new Date();
-        _StdOut.putText("" + (currentDate.getMonth()+1) + "/"
-                       + currentDate.getDate() + "/"
-                       + currentDate.getFullYear() + " "
-                       + currentDate.getHours() + ":"
-                       + currentDate.getMinutes() + ":"
-                       + currentDate.getSeconds());
+        _StdOut.putText("" + currentDate.toLocaleString());
     }
     this.commandList[this.commandList.length] = sc;
 
@@ -383,6 +378,10 @@ function shellHelp(args)
 function shellShutdown(args)
 {
      _StdIn.putText("Shutting down...");
+
+     // Set status
+     document.getElementById("status").innerHTML = "Shutdown";
+
      // Call Kernel shutdown routine.
     krnShutdown();   
     // TODO: Stop the final prompt from being displayed.  If possible.  Not a high priority.  (Damn OCD!)
