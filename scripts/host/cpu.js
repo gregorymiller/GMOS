@@ -27,12 +27,21 @@ function Cpu() {
         this.Xreg  = 0;
         this.Yreg  = 0;
         this.Zflag = 0;      
-        this.isExecuting = false;  
+        this.isExecuting = false;
     };
     
     this.cycle = function() {
         krnTrace("CPU cycle");
         // TODO: Accumulate CPU usage and profiling statistics here.
         // Do the real work here. Be sure to set this.isExecuting appropriately.
+    };
+
+    this.update = function (pc, acc, x, y, z) {
+        this.PC = pc;
+        this.Acc = acc;
+        this.Xreg = x;
+        this.Yreg = y;
+        this.Zflag = z;
+
     };
 }

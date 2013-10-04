@@ -3,9 +3,9 @@
 <head>
    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
    <meta name="author"             content="Alan G. Labouseur" />
-   <link rel="stylesheet" href="alanbbos.css" type="text/css" media="screen" />
+   <link rel="stylesheet" href="GMOS.css" type="text/css" media="screen" />
    <title>
-      AlanBBOS - a Browser-based virtual Operating System
+      GMOS - a Browser-based virtual Operating System
    </title>
 
    <!-- Globals CONSTANTS and _Variables. Must included be first. -->
@@ -15,6 +15,7 @@
    <script type="text/javascript" src="scripts/host/control.js"></script>
    <script type="text/javascript" src="scripts/host/devices.js"></script>
    <script type="text/javascript" src="scripts/host/cpu.js"></script>
+   <script type="text/javascript" src="scripts/host/memory.js"></script>
 
    <!-- Virtual OS Routines: Make sure Kernel code is last, since it needs those above it. -->
    <script type="text/javascript" src="scripts/os/interrupt.js"></script>
@@ -25,6 +26,9 @@
    <script type="text/javascript" src="scripts/os/queue.js"></script>
    <script type="text/javascript" src="scripts/os/shell.js"></script>
    <script type="text/javascript" src="scripts/os/kernel.js"></script>
+   <script type="text/javascript" src="scripts/os/processControlBlock.js"></script>
+   <script type="text/javascript" src="scripts/os/memoryManager.js"></script>
+   <script type="text/javascript" src="scripts/os/programHandler.js"></script>
 
    <!-- Other Routines -->
    <script type="text/javascript" src="scripts/utils.js"></script>
@@ -72,8 +76,11 @@
           </canvas>
        </div>
 
-       <div id="divMemoryDisplay">
-           <label> Memory Display </label>
+       <label> Memory Display </label>
+       <div id="divMemoryDisplay" style="width:470px; height:250px; overflow-y:auto;">
+           <table id="memory" border="1" width="450" style="table-layout:fixed; text-align:center;">
+               <col width="75">
+           </table>
        </div>
    </div>
 

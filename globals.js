@@ -12,19 +12,34 @@
 // Global CONSTANTS
 //
 var APP_NAME = "GMOS";  // Same here
-var APP_VERSION = "1.0";   // What did you expect?
+var APP_VERSION = "1.1";   // What did you expect?
 
 var CPU_CLOCK_INTERVAL = 100;   // This is in ms, or milliseconds, so 1000 = 1 second.
 
 var TIMER_IRQ = 0;  // Pages 23 (timer), 9 (interrupts), and 561 (interrupt priority).
                     // NOTE: The timer is different from hardware/host clock pulses. Don't confuse these.
-var KEYBOARD_IRQ = 1;  
+var KEYBOARD_IRQ = 1;
 
+var TOTAL_MEMORY = 768;     // Total memory size
+
+// PCB state
+var PROCESS_NEW     = 0;
+var PROCESS_LOADED  = 1;
+var PROCESS_READY   = 2;
+var PROCESS_RUNNING = 3;
+var PROCESS_STOPPED = 4;
 
 //
 // Global Variables
 //
 var _CPU = null;
+
+var _Memory = null;
+var _MemoryManager = null;
+
+var _RunningProcess = null;
+var _PID = 0;
+
 
 var _OSclock = 0;       // Page 23.
 

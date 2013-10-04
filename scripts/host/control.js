@@ -41,6 +41,9 @@ function hostInit()
       _GLaDOS = new Glados();
       _GLaDOS.init();
    };
+
+   // Create the memory table
+   tableCreate();
 }
 
 function hostLog(msg, source)
@@ -84,6 +87,10 @@ function hostBtnStartOS_click(btn)
     // ... Create and initialize the CPU ...
     _CPU = new Cpu();
     _CPU.init();
+
+    // Initialize memory and the manager
+    _Memory = new memory();
+    _MemoryManager = new memoryManager();
 
     // Set status
     document.getElementById("status").innerHTML = "Running";

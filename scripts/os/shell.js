@@ -118,6 +118,11 @@ function shellInit() {
         else
         {
             _StdOut.putText("Program loaded correctly");
+
+            var pid = loadProgram(userText);
+
+            _Console.advanceLine();
+            _StdOut.putText("PID:" + pid);
         }
     };
     this.commandList[this.commandList.length] = sc;
