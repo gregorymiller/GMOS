@@ -111,6 +111,7 @@ function shellInit() {
 
         var pattern = /[^0-9a-fA-F\s]/;
 
+        // If the pattern is found then it is not valid input otherwise load the program
         if (userText.search(pattern) != -1)
         {
             _StdOut.putText("Not valid program text");
@@ -127,12 +128,43 @@ function shellInit() {
     };
     this.commandList[this.commandList.length] = sc;
 
+    // run
+    sc = new ShellCommand();
+    sc.command = "run";
+    sc.description = "<PID> - runs program with the PID";
+    sc.function = function(args) {
+        if (args.length > 0)
+        {
+            // Since we are only running one program so make sure the pids match
+            if ( args == _ProgramList[0].pid)
+            {
+                // Get the process from the program list and change state
+                _RunningProcess = _ProgramList[0];
+                _RunningProcess.state = PROCESS_RUNNING;
+
+                // Clear CPU and start executing
+                _CPU.clearCPU();
+                _CPU.isExecuting = true;
+
+                // Remove process
+                _ProgramList[0] = null;
+            }
+        }
+        else
+        {
+            _StdOut.putText("Usage: run <PID> Please supply a PID");
+        }
+    };
+    this.commandList[this.commandList.length] = sc;
+
     // status
     sc = new ShellCommand();
     sc.command = "status";
     sc.description = "<string> - display <string> in footer of the page.";
     sc.function = function(args) {
         var footerElement = document.getElementById("status");
+
+        // If multiple arguments are given add them all to text and display it
         if (args.length > 0)
         {
             var text = "";
@@ -162,8 +194,10 @@ function shellInit() {
     sc.command = "openurl";
     sc.description = "<url> - opens specified url";
     sc.function = function(args) {
+        // Create a url pattern
         var pattern = /(ftp|http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/;
 
+        // If it is a valid url open the link in a new window
         if (args.length > 0)
         {
             var text = "";

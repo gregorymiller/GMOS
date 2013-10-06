@@ -40,6 +40,8 @@ var _MemoryManager = null;
 var _RunningProcess = null;
 var _PID = 0;
 
+var _ProgramList = [];
+
 
 var _OSclock = 0;       // Page 23.
 

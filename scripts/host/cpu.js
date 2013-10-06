@@ -29,11 +29,29 @@ function Cpu() {
         this.Zflag = 0;      
         this.isExecuting = false;
     };
+
+    this.clearCPU = function() {
+        this.PC    = 0;
+        this.Acc   = 0;
+        this.Xreg  = 0;
+        this.Yreg  = 0;
+        this.Zflag = 0;
+        this.isExecuting = false;
+    };
     
     this.cycle = function() {
         krnTrace("CPU cycle");
         // TODO: Accumulate CPU usage and profiling statistics here.
-        // Do the real work here. Be sure to set this.isExecuting appropriately.
+
+        // Fetch and execute
+        this.execute(this.fetch());
+
+        // Update CPU display
+        document.getElementById("CPUPC").innerHTML = this.PC.toString();
+        document.getElementById("CPUACC").innerHTML = this.Acc.toString();
+        document.getElementById("CPUX").innerHTML = this.Xreg.toString();
+        document.getElementById("CPUY").innerHTML = this.Yreg.toString();
+        document.getElementById("CPUZ").innerHTML = this.Zflag.toString();
     };
 
     this.update = function (pc, acc, x, y, z) {
@@ -44,4 +62,352 @@ function Cpu() {
         this.Zflag = z;
 
     };
+
+    this.fetch = function () {
+        return _Memory[this.PC];
+    };
+
+    this.execute = function(opCode) {
+        if (opCode == "A9")
+        {
+            loadAccWithConst();
+        }
+        else if (opCode == "AD")
+        {
+            loadAccFromMem();
+        }
+        else if (opCode == "8D")
+        {
+            storeAccInMem();
+        }
+        else if (opCode == "6D")
+        {
+            addWithCarry();
+        }
+        else if (opCode == "A2")
+        {
+            loadXRegWithConst();
+        }
+        else if (opCode == "AE")
+        {
+            loadXRegFromMem();
+        }
+        else if (opCode == "A0")
+        {
+            loadYRegWithConst();
+        }
+        else if (opCode == "AC")
+        {
+            loadYRegFromMem();
+        }
+        else if (opCode == "EA")
+        {
+            noOperation();
+        }
+        else if (opCode == "00")
+        {
+            systemBreak();
+        }
+        else if (opCode == "EC")
+        {
+            compareXReg();
+        }
+        else if (opCode == "D0")
+        {
+            branchXBytes();
+        }
+        else if (opCode == "EE")
+        {
+            incrementByteVal();
+        }
+        else if (opCode == "FF")
+        {
+            systemCall();
+        }
+        else
+        {
+            systemBreak();
+        }
+    };
+}
+
+// A9
+function loadAccWithConst() {
+    // Put the next byte's decimal value in the ACC and increment the PC
+    _CPU.Acc = parseInt(_MemoryManager.getNextByte(), 16);
+    _CPU.PC++;
+}
+
+// AD
+function loadAccFromMem() {
+    // Get next two bytes from memory
+    var one = _MemoryManager.getNextByte();
+    var two = _MemoryManager.getNextByte();
+
+    // Get the correct decimal address in the correct order
+    var decAddr = parseInt((two + one), 16);
+
+    // Check if it is valid
+    // If it is load the ACC else crash the OS
+    if (_MemoryManager.isValidAddress(decAddr))
+    {
+        _CPU.Acc = parseInt(_Memory[decAddr], 16);
+    }
+    else
+    {
+        krnTrapError("Invalid memory request");
+    }
+
+    _CPU.PC++;
+}
+
+// 8D
+function storeAccInMem() {
+    // Get next two bytes from memory
+    var one = _MemoryManager.getNextByte();
+    var two = _MemoryManager.getNextByte();
+
+    // Get the correct decimal address in the correct order
+    var decAddr = parseInt((two + one), 16);
+
+    // Check if it is valid
+    // If it is store the ACC in memory else crash the OS
+    if (_MemoryManager.isValidAddress(decAddr))
+    {
+        // Convert the dec ACC to hex for storage
+        var hex = _CPU.Acc.toString(16).toUpperCase();
+        _Memory[decAddr] = hex;
+    }
+    else
+    {
+        krnTrapError("Invalid memory request");
+    }
+
+    _CPU.PC++;
+}
+
+// 6D
+function addWithCarry() {
+    // Get next two bytes from memory
+    var one = _MemoryManager.getNextByte();
+    var two = _MemoryManager.getNextByte();
+
+    // Get the correct decimal address in the correct order
+    var decAddr = parseInt((two + one), 16);
+
+    // Check if it is valid
+    // If it is add the memory to the ACC else crash the OS
+    if (_MemoryManager.isValidAddress(decAddr))
+    {
+        _CPU.Acc += parseInt(_Memory[decAddr], 16);
+    }
+    else
+    {
+        krnTrapError("Invalid memory request");
+    }
+
+    _CPU.PC++;
+}
+
+// A2
+function loadXRegWithConst() {
+    // Put the next byte's decimal value in the XReg and increment the PC
+    _CPU.Xreg = parseInt(_MemoryManager.getNextByte(), 16);
+    _CPU.PC++;
+}
+
+// AE
+function loadXRegFromMem() {
+    // Get next two bytes from memory
+    var one = _MemoryManager.getNextByte();
+    var two = _MemoryManager.getNextByte();
+
+    // Get the correct decimal address in the correct order
+    var decAddr = parseInt((two + one), 16);
+
+    // Check if it is valid
+    // If it is load the XReg else crash the OS
+    if (_MemoryManager.isValidAddress(decAddr))
+    {
+        _CPU.Xreg = parseInt(_Memory[decAddr], 16);
+    }
+    else
+    {
+        krnTrapError("Invalid memory request");
+    }
+
+    _CPU.PC++;
+}
+
+// A0
+function loadYRegWithConst() {
+    // Put the next byte's decimal value in the YReg and increment the PC
+    _CPU.Yreg = parseInt(_MemoryManager.getNextByte(), 16);
+    _CPU.PC++;
+}
+
+// AC
+function loadYRegFromMem() {
+    // Get next two bytes from memory
+    var one = _MemoryManager.getNextByte();
+    var two = _MemoryManager.getNextByte();
+
+    // Get the correct decimal address in the correct order
+    var decAddr = parseInt((two + one), 16);
+
+    // Check if it is valid
+    // If it is load the Yreg else crash the OS
+    if (_MemoryManager.isValidAddress(decAddr))
+    {
+        _CPU.Yreg = parseInt(_Memory[decAddr], 16);
+    }
+    else
+    {
+        krnTrapError("Invalid memory request");
+    }
+
+    _CPU.PC++;
+}
+
+// EA
+function noOperation() {
+    // Only need to increment PC
+    _CPU.PC++;
+}
+
+// 00
+function systemBreak() {
+    // Update the PCB of the process
+    _RunningProcess.update(PROCESS_STOPPED, _CPU.PC, _CPU.Acc, _CPU.Xreg, _CPU.Yreg, _CPU.Zflag);
+
+    // Stop the CPU and
+    _CPU.isExecuting = false;
+}
+
+// EC
+function compareXReg() {
+    // Get next two bytes from memory
+    var one = _MemoryManager.getNextByte();
+    var two = _MemoryManager.getNextByte();
+
+    // Get the correct decimal address in the correct order
+    var decAddr = parseInt((two + one), 16);
+
+    // Check if it is valid
+    // If it is compare Xreg to memory location else crash the OS
+    if (_MemoryManager.isValidAddress(decAddr))
+    {
+        if (parseInt(_Memory[decAddr], 16) == _CPU.Xreg)
+        {
+            _CPU.Zflag = 1;
+        }
+        else
+        {
+            _CPU.Zflag = 0;
+        }
+    }
+    else
+    {
+        krnTrapError("Invalid memory request");
+    }
+
+    _CPU.PC++;
+}
+
+// D0
+function branchXBytes() {
+    if (_CPU.Zflag == 0)
+    {
+        // Get the branch value
+        var branchVal = parseInt(_MemoryManager.getNextByte(), 16);
+
+        _CPU.PC += branchVal;
+
+        // Check to make sure you have not branched out of memory
+        if (_CPU.PC > 255)
+        {
+            _CPU.PC -= 256;
+        }
+
+        _CPU.PC++;
+    }
+    else
+    {
+        // If not skip over the next value as well as the op code
+        _CPU.PC += 2;
+    }
+}
+
+// EE
+function incrementByteVal() {
+    // Get next two bytes from memory
+    var one = _MemoryManager.getNextByte();
+    var two = _MemoryManager.getNextByte();
+
+    // Get the correct decimal address in the correct order
+    var decAddr = parseInt((two + one), 16);
+
+    // Check if it is valid
+    // If it is increment the byte else crash the OS
+    if (_MemoryManager.isValidAddress(decAddr))
+    {
+        var decimalForm = parseInt(_Memory[decAddr], 16);
+        decimalForm++;
+
+        var hexForm = decimalForm.toString(16).toUpperCase();
+
+        _Memory[decAddr] = hexForm;
+    }
+    else
+    {
+        krnTrapError("Invalid memory request");
+    }
+
+    _CPU.PC++;
+}
+
+// FF
+function systemCall() {
+    // Print value in Yreg
+    if (_CPU.Xreg == 1)
+    {
+        // Get the string value of the Yreg
+        var valueText = _CPU.Yreg.toString();
+
+        // Display the text and advance the line
+        _StdOut.putText(valueText);
+        _Console.advanceLine();
+    }
+    // Print the 00-terminated string stored at the address in the Yreg
+    else if (_CPU.Xreg == 1)
+    {
+        // Get the dec address of the hex value stored in the Yreg
+        var decAddr = parseInt(_CPU.Yreg, 16);
+
+        // Store the current byte in memory
+        var currentByte = _Memory[decAddr];
+
+        // Create keyCode and chr for use in loop
+        var keyCode = 0;
+        var chr = "";
+
+        while (currentByte != "00")
+        {
+            // Convert the current byte to a decimal key code
+            keyCode = parseInt(currentByte, 16);
+
+            // Get the character and display the character
+            chr = String.fromCharCode(keyCode);
+            _StdOut.putText(chr);
+
+            // Increment the address and get the next byte
+            decAddr++;
+            currentByte = _Memory[decAddr];
+        }
+
+        // Advance a line after ouput is complete
+        _Console.advanceLine();
+
+    }
+    _CPU.Acc++;
 }

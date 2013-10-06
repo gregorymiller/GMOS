@@ -33,6 +33,10 @@ function memoryManager()
     // Make sure that a process is within its start and end
     this.isValidAddress = function(address) {
         return (address >= _RunningProcess.base && address <= _RunningProcess.limit);
+    };
+
+    this.getNextByte = function() {
+        return _Memory[++_CPU.PC];
     }
 
 }
@@ -52,7 +56,7 @@ function tableCreate(){
         // Color the beginning of the different memory sections
         if(i == 0 || i == 256 || i == 512)
         {
-            firstCell.style.background="#4080B0";
+            firstCell.style.background="#C0C0C0";
         }
 
         // Create the correct amount of memory locations showing the default memory value

@@ -16,9 +16,14 @@ function loadProgram(txt) {
         _Memory[i] = txt[i - process.base].toUpperCase();
     }
 
+    // Change process state
     process.state = PROCESS_LOADED;
 
     updateTable();
+
+    // Add the process to to the program list
+    // Only using 0 because for now there is only one program
+    _ProgramList[0] = process;
 
     return process.pid;
 }
