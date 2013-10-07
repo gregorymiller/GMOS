@@ -42,6 +42,9 @@ function newProcess() {
     limit = _MemoryManager.memorySections.one.limit;
     section = _MemoryManager.memorySections.one.section;
 
+    // Clear the memory section you want to load the program in
+    _MemoryManager.clearMemorySection(1);
+
 
     return (new processControlBlock(state, pid, pc, base, limit, section));
 }

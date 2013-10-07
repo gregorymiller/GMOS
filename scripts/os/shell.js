@@ -260,6 +260,9 @@ function shellHandleInput(buffer)
         {
             found = true;
             var fn = this.commandList[index].function;
+
+            // Added this so that it will not put a prompt after the run command
+            var fnName = this.commandList[index].command;
         }
         else
         {
@@ -268,7 +271,7 @@ function shellHandleInput(buffer)
     }
     if (found)
     {
-        this.execute(fn, args);
+        this.execute(fn, args, fnName);
     }
     else
     {
@@ -320,19 +323,34 @@ function shellParseInput(buffer)
     return retVal;
 }
 
-function shellExecute(fn, args)
+function shellExecute(fn, args, fnName)
 {
-    // We just got a command, so advance the line...
-    _StdIn.advanceLine();
-    // ... call the command function passing in the args...
-    fn(args);
-    // Check to see if we need to advance the line again
-    if (_StdIn.CurrentXPosition > 0)
+    if (fnName != "run")
     {
+        // We just got a command, so advance the line...
         _StdIn.advanceLine();
+        // ... call the command function passing in the args...
+        fn(args);
+        // Check to see if we need to advance the line again
+        if (_StdIn.CurrentXPosition > 0)
+        {
+            _StdIn.advanceLine();
+        }
+        // ... and finally write the prompt again.
+        this.putPrompt();
     }
-    // ... and finally write the prompt again.
-    this.putPrompt();
+    else
+    {
+        // We just got a command, so advance the line...
+        _StdIn.advanceLine();
+        // ... call the command function passing in the args...
+        fn(args);
+        // Check to see if we need to advance the line again
+        if (_StdIn.CurrentXPosition > 0)
+        {
+            _StdIn.advanceLine();
+        }
+    }
 }
 
 

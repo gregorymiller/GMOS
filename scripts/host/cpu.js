@@ -46,12 +46,13 @@ function Cpu() {
         // Fetch and execute
         this.execute(this.fetch());
 
-        // Update CPU display
-        document.getElementById("CPUPC").innerHTML = this.PC.toString();
+        // Update CPU and memory display
+        document.getElementById("CPUPC").innerHTML = "0x" + this.PC.toString(16).toUpperCase();
         document.getElementById("CPUACC").innerHTML = this.Acc.toString();
         document.getElementById("CPUX").innerHTML = this.Xreg.toString();
         document.getElementById("CPUY").innerHTML = this.Yreg.toString();
         document.getElementById("CPUZ").innerHTML = this.Zflag.toString();
+        updateTable();
     };
 
     this.update = function (pc, acc, x, y, z) {
@@ -282,6 +283,9 @@ function systemBreak() {
 
     // Stop the CPU and
     _CPU.isExecuting = false;
+
+    // Put a new prompt on the screen
+    _StdIn.putText(_OsShell.promptStr);
 }
 
 // EC
@@ -379,10 +383,10 @@ function systemCall() {
         _Console.advanceLine();
     }
     // Print the 00-terminated string stored at the address in the Yreg
-    else if (_CPU.Xreg == 1)
+    else if (_CPU.Xreg == 2)
     {
         // Get the dec address of the hex value stored in the Yreg
-        var decAddr = parseInt(_CPU.Yreg, 16);
+        var decAddr = parseInt(_CPU.Yreg);
 
         // Store the current byte in memory
         var currentByte = _Memory[decAddr];
@@ -405,9 +409,9 @@ function systemCall() {
             currentByte = _Memory[decAddr];
         }
 
-        // Advance a line after ouput is complete
+        // Advance a line after output is complete
         _Console.advanceLine();
 
     }
-    _CPU.Acc++;
+    _CPU.PC++;
 }

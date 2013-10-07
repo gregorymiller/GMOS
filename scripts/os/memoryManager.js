@@ -37,7 +37,31 @@ function memoryManager()
 
     this.getNextByte = function() {
         return _Memory[++_CPU.PC];
-    }
+    };
+
+    this.clearMemorySection = function(section) {
+        if (section == 1)
+        {
+            for (var i = this.memorySections.one.base; i <= this.memorySections.one.limit; i++)
+            {
+                _Memory[i] = "00";
+            }
+        }
+        else if (section == 2)
+        {
+            for (var i = this.memorySections.two.base; i <= this.memorySections.two.limit; i++)
+            {
+                _Memory[i] = "00";
+            }
+        }
+        else if (section == 3)
+        {
+            for (var i = this.memorySections.three.base; i <= this.memorySections.three.limit; i++)
+            {
+                _Memory[i] = "00";
+            }
+        }
+    };
 
 }
 
