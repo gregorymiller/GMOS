@@ -12,21 +12,18 @@ function memoryManager()
             base: 0,
             limit: 255,
             section: 1,
-            codeLoaded: false
         },
 
         two: {
             base: 256,
             limit: 511,
             section: 2,
-            codeLoaded: false
         },
 
         three: {
             base: 512,
             limit: 767,
             section: 3,
-            codeLoaded: false
         }
     };
 
@@ -35,10 +32,12 @@ function memoryManager()
         return (address >= _RunningProcess.base && address <= _RunningProcess.limit);
     };
 
+    // Get the next byte in memory
     this.getNextByte = function() {
         return _Memory[++_CPU.PC];
     };
 
+    // Clear a given memory section
     this.clearMemorySection = function(section) {
         if (section == 1)
         {

@@ -123,7 +123,7 @@ function shellInit() {
             var pid = loadProgram(userText);
 
             _Console.advanceLine();
-            _StdOut.putText("PID:" + pid);
+            _StdOut.putText("PID: " + pid);
         }
     };
     this.commandList[this.commandList.length] = sc;
@@ -182,7 +182,7 @@ function shellInit() {
 
     // Crash the OS
     sc = new ShellCommand();
-    sc.command = "crash...everything";
+    sc.command = "bsod";
     sc.description = "- crash the OS.";
     sc.function = function() {
         krnTrapError("User");
@@ -325,6 +325,7 @@ function shellParseInput(buffer)
 
 function shellExecute(fn, args, fnName)
 {
+    // Changed so that when running a program it will not put prompts
     if (fnName != "run")
     {
         // We just got a command, so advance the line...

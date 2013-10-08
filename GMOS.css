@@ -36,14 +36,14 @@ h3 {
 
 #divConsole {
     border: 2px solid black;
-    margin:4px;
-    width:523px;
-    height:523px;
-    overflow-y:auto;
+    margin: 4px;
+    width: 523px;
+    height: 523px;
+    overflow-y: auto;
 }
 
 #display {
-	background-color:#FFFFFF;
+	background-color: #FFFFFF;
 	cursor: default;
     outline: none;
 }
@@ -53,7 +53,7 @@ h3 {
 }
 
 #footerBar {
-    position:absolute;
+    position: absolute;
     left: 0;
     bottom: 0;
     width: 100%;

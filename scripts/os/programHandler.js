@@ -19,6 +19,7 @@ function loadProgram(txt) {
     // Change process state
     process.state = PROCESS_LOADED;
 
+    // Update table with new memory
     updateTable();
 
     // Add the process to to the program list

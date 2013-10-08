@@ -47,11 +47,7 @@ function Cpu() {
         this.execute(this.fetch());
 
         // Update CPU and memory display
-        document.getElementById("CPUPC").innerHTML = "0x" + this.PC.toString(16).toUpperCase();
-        document.getElementById("CPUACC").innerHTML = this.Acc.toString();
-        document.getElementById("CPUX").innerHTML = this.Xreg.toString();
-        document.getElementById("CPUY").innerHTML = this.Yreg.toString();
-        document.getElementById("CPUZ").innerHTML = this.Zflag.toString();
+        updateCPUDisplay();
         updateTable();
     };
 
@@ -64,10 +60,12 @@ function Cpu() {
 
     };
 
+    // Fetch the next byte in memory
     this.fetch = function () {
         return _Memory[this.PC];
     };
 
+    // Execute the current byte in memory
     this.execute = function(opCode) {
         if (opCode == "A9")
         {
@@ -285,7 +283,7 @@ function systemBreak() {
     _CPU.isExecuting = false;
 
     // Put a new prompt on the screen
-    _StdIn.putText(_OsShell.promptStr);
+    _StdOut.putText(_OsShell.promptStr);
 }
 
 // EC
@@ -322,9 +320,8 @@ function compareXReg() {
 function branchXBytes() {
     if (_CPU.Zflag == 0)
     {
-        // Get the branch value
+        // Get the branch value and branch
         var branchVal = parseInt(_MemoryManager.getNextByte(), 16);
-
         _CPU.PC += branchVal;
 
         // Check to make sure you have not branched out of memory
@@ -414,4 +411,20 @@ function systemCall() {
 
     }
     _CPU.PC++;
+}
+
+function updateCPUDisplay() {
+    // Update the hex side
+    document.getElementById("CPUPCHEX").innerHTML  = "0x" + _CPU.PC.toString(16).toUpperCase();
+    document.getElementById("CPUACCHEX").innerHTML = "0x" + _CPU.Acc.toString(16).toUpperCase();
+    document.getElementById("CPUXHEX").innerHTML   = "0x" + _CPU.Xreg.toString(16).toUpperCase();
+    document.getElementById("CPUYHEX").innerHTML   = "0x" + _CPU.Yreg.toString(16).toUpperCase();
+    document.getElementById("CPUZHEX").innerHTML   = "0x" + _CPU.Zflag.toString(16).toUpperCase();
+
+    // Update the decimal side
+    document.getElementById("CPUPCDEC").innerHTML  = _CPU.PC.toString();
+    document.getElementById("CPUACCDEC").innerHTML = _CPU.Acc.toString();
+    document.getElementById("CPUXDEC").innerHTML   = _CPU.Xreg.toString();
+    document.getElementById("CPUYDEC").innerHTML   = _CPU.Yreg.toString();
+    document.getElementById("CPUZDEC").innerHTML   = _CPU.Zflag.toString();
 }

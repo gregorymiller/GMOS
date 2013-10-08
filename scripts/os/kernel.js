@@ -193,9 +193,10 @@ function krnTrapError(msg)
     var canvasDiv = document.getElementById("divConsole");
     canvasDiv.scrollTop = 0;
 
-    // Repaint the Canvas
+    // Repaint the Canvas and fill div background
     _DrawingContext.fillStyle = "#6495ED";
     _DrawingContext.fillRect(0, 0, _Canvas.width, _Canvas.height);
+    document.getElementById("divConsole").style.background = "#6495ED";
 
     // Display message and reason for error
     _StdOut.putText("Congratulations you crashed everything");
