@@ -157,6 +157,38 @@ function shellInit() {
     };
     this.commandList[this.commandList.length] = sc;
 
+    // step
+    sc = new ShellCommand();
+    sc.command = "step";
+    sc.description = "<PID> - step on process";
+    sc.function = function(args) {
+        if (args.length > 0)
+        {
+            // Since we are only running one program so make sure the pids match
+            if ( args == _ProgramList[0].pid)
+            {
+                // Get the process from the program list and change state
+                _RunningProcess = _ProgramList[0];
+                _RunningProcess.state = PROCESS_RUNNING;
+
+                // Clear CPU and start stepping
+                _CPU.clearCPU();
+                _CPU.isStepping = true;
+
+                // Enable button to start stepping
+                document.getElementById("btnStep").disabled = false;
+
+                // Remove process
+                _ProgramList[0] = null;
+            }
+        }
+        else
+        {
+            _StdOut.putText("Usage: step <PID> Please supply a PID");
+        }
+    };
+    this.commandList[this.commandList.length] = sc;
+
     // status
     sc = new ShellCommand();
     sc.command = "status";
@@ -325,8 +357,8 @@ function shellParseInput(buffer)
 
 function shellExecute(fn, args, fnName)
 {
-    // Changed so that when running a program it will not put prompts
-    if (fnName != "run")
+    // Changed so that it will not put prompts right after the command
+    if (fnName == "run" || fnName == "step" || fnName == "bsod")
     {
         // We just got a command, so advance the line...
         _StdIn.advanceLine();
@@ -337,8 +369,6 @@ function shellExecute(fn, args, fnName)
         {
             _StdIn.advanceLine();
         }
-        // ... and finally write the prompt again.
-        this.putPrompt();
     }
     else
     {
@@ -351,6 +381,8 @@ function shellExecute(fn, args, fnName)
         {
             _StdIn.advanceLine();
         }
+        // ... and finally write the prompt again.
+        this.putPrompt();
     }
 }
 

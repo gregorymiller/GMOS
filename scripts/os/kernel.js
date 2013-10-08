@@ -88,7 +88,11 @@ function krnOnCPUClockPulse()
     else if (_CPU.isExecuting) // If there are no interrupts then run one CPU cycle if there is anything being processed.
     {
         _CPU.cycle();
-    }    
+    }
+    else if (_CPU.isStepping)
+    {
+        // If the cpu is stepping don't do anything until button is pressed
+    }
     else                       // If there are no interrupts and there is nothing being executed then just be idle.
     {
        krnTrace("Idle");

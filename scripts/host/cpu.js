@@ -20,6 +20,7 @@ function Cpu() {
     this.Yreg  = 0;     // Y register
     this.Zflag = 0;     // Z-ero flag (Think of it as "isZero".)
     this.isExecuting = false;
+    this.isStepping = false;
     
     this.init = function() {
         this.PC    = 0;
@@ -28,6 +29,7 @@ function Cpu() {
         this.Yreg  = 0;
         this.Zflag = 0;      
         this.isExecuting = false;
+        this.isStepping = false;
     };
 
     this.clearCPU = function() {
@@ -37,6 +39,7 @@ function Cpu() {
         this.Yreg  = 0;
         this.Zflag = 0;
         this.isExecuting = false;
+        this.isStepping = false;
     };
     
     this.cycle = function() {
@@ -57,7 +60,6 @@ function Cpu() {
         this.Xreg = x;
         this.Yreg = y;
         this.Zflag = z;
-
     };
 
     // Fetch the next byte in memory
@@ -279,8 +281,9 @@ function systemBreak() {
     // Update the PCB of the process
     _RunningProcess.update(PROCESS_STOPPED, _CPU.PC, _CPU.Acc, _CPU.Xreg, _CPU.Yreg, _CPU.Zflag);
 
-    // Stop the CPU and
+    // Stop the CPU and stop stepping
     _CPU.isExecuting = false;
+    _CPU.isStepping = false;
 
     // Put a new prompt on the screen
     _StdOut.putText(_OsShell.promptStr);
