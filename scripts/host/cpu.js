@@ -285,6 +285,9 @@ function systemBreak() {
     _CPU.isExecuting = false;
     _CPU.isStepping = false;
 
+    // Disable the step button if it was stepping
+    document.getElementById("btnStep").disabled = true;
+
     // Put a new prompt on the screen
     _StdOut.putText(_OsShell.promptStr);
 }

@@ -134,7 +134,6 @@ function hostBtnStep_click(btn) {
     }
     else
     {
-        // If stepping is done disable the button
-        document.getElementById("btnStep").disabled = true;
+        // Do nothing
     }
 }
