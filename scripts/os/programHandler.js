@@ -10,11 +10,8 @@ function loadProgram(txt) {
     var process = newProcess();
     txt = txt.split(" ");
 
-    // Go from the memory section base to the end of the program and load it into the program
-    for (var i = process.base; i < (process.base + txt.length); i++)
-    {
-        _Memory[i] = txt[i - process.base].toUpperCase();
-    }
+    // Load program into memory
+    _MemoryManager.loadMemorySection(process.section, txt);
 
     // Change process state
     process.state = PROCESS_LOADED;

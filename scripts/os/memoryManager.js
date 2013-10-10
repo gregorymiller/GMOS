@@ -37,6 +37,31 @@ function memoryManager()
         return _Memory[++_CPU.PC];
     };
 
+    // Load the given memory section
+    this.loadMemorySection = function(section, opCode) {
+        if (section == 1)
+        {
+            for (var i = this.memorySections.one.base; i < (this.memorySections.one.base + opCode.length); i++)
+            {
+                _Memory[i] = opCode[i - this.memorySections.one.base].toUpperCase();
+            }
+        }
+        else if (section == 2)
+        {
+            for (var i = this.memorySections.two.base; i < (this.memorySections.two.base + opCode.length); i++)
+            {
+                _Memory[i] = opCode[i - this.memorySections.two.base].toUpperCase();
+            }
+        }
+        else if (section == 3)
+        {
+            for (var i = this.memorySections.three.base; i < (this.memorySections.three.base + opCode.length); i++)
+            {
+                _Memory[i] = opCode[i - this.memorySections.three.base].toUpperCase();
+            }
+        }
+    }
+
     // Clear a given memory section
     this.clearMemorySection = function(section) {
         if (section == 1)
