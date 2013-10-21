@@ -21,7 +21,7 @@ function loadProgram(txt) {
 
     // Add the process to to the program list
     // Only using 0 because for now there is only one program
-    _ProgramList[0] = process;
+    _JobList[0] = process;
 
     return process.pid;
 }

@@ -279,7 +279,7 @@ function noOperation() {
 // 00
 function systemBreak() {
     // Update the PCB of the process
-    _RunningProcess.update(PROCESS_STOPPED, _CPU.PC, _CPU.Acc, _CPU.Xreg, _CPU.Yreg, _CPU.Zflag);
+    _RunningProcess.update(PROCESS_TERMINATED, _CPU.PC, _CPU.Acc, _CPU.Xreg, _CPU.Yreg, _CPU.Zflag);
 
     // Stop the CPU and stop stepping
     _CPU.isExecuting = false;
@@ -331,9 +331,9 @@ function branchXBytes() {
         _CPU.PC += branchVal;
 
         // Check to make sure you have not branched out of memory
-        if (_CPU.PC > 255)
+        if (_CPU.PC >= PARTITION_SIZE)
         {
-            _CPU.PC -= 256;
+            _CPU.PC -= PARTITION_SIZE;
         }
 
         _CPU.PC++;
@@ -417,20 +417,4 @@ function systemCall() {
 
     }
     _CPU.PC++;
-}
-
-function updateCPUDisplay() {
-    // Update the hex side
-    document.getElementById("CPUPCHEX").innerHTML  = "0x" + _CPU.PC.toString(16).toUpperCase();
-    document.getElementById("CPUACCHEX").innerHTML = "0x" + _CPU.Acc.toString(16).toUpperCase();
-    document.getElementById("CPUXHEX").innerHTML   = "0x" + _CPU.Xreg.toString(16).toUpperCase();
-    document.getElementById("CPUYHEX").innerHTML   = "0x" + _CPU.Yreg.toString(16).toUpperCase();
-    document.getElementById("CPUZHEX").innerHTML   = "0x" + _CPU.Zflag.toString(16).toUpperCase();
-
-    // Update the decimal side
-    document.getElementById("CPUPCDEC").innerHTML  = _CPU.PC.toString();
-    document.getElementById("CPUACCDEC").innerHTML = _CPU.Acc.toString();
-    document.getElementById("CPUXDEC").innerHTML   = _CPU.Xreg.toString();
-    document.getElementById("CPUYDEC").innerHTML   = _CPU.Yreg.toString();
-    document.getElementById("CPUZDEC").innerHTML   = _CPU.Zflag.toString();
 }

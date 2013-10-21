@@ -136,10 +136,10 @@ function shellInit() {
         if (args.length > 0)
         {
             // Since we are only running one program so make sure the pids match
-            if ( args == _ProgramList[0].pid)
+            if ( args == _JobList[0].pid)
             {
                 // Get the process from the program list and change state
-                _RunningProcess = _ProgramList[0];
+                _RunningProcess = _JobList[0];
                 _RunningProcess.state = PROCESS_RUNNING;
 
                 // Clear CPU and start executing
@@ -147,7 +147,7 @@ function shellInit() {
                 _CPU.isExecuting = true;
 
                 // Remove process
-                _ProgramList[0] = null;
+                _JobList[0] = null;
             }
         }
         else
@@ -165,10 +165,10 @@ function shellInit() {
         if (args.length > 0)
         {
             // Since we are only running one program so make sure the pids match
-            if ( args == _ProgramList[0].pid)
+            if ( args == _JobList[0].pid)
             {
                 // Get the process from the program list and change state
-                _RunningProcess = _ProgramList[0];
+                _RunningProcess = _JobList[0];
                 _RunningProcess.state = PROCESS_RUNNING;
 
                 // Clear CPU and start stepping
@@ -179,7 +179,7 @@ function shellInit() {
                 document.getElementById("btnStep").disabled = false;
 
                 // Remove process
-                _ProgramList[0] = null;
+                _JobList[0] = null;
             }
         }
         else

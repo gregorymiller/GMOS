@@ -21,13 +21,15 @@ var TIMER_IRQ = 0;  // Pages 23 (timer), 9 (interrupts), and 561 (interrupt prio
 var KEYBOARD_IRQ = 1;
 
 var TOTAL_MEMORY = 768;     // Total memory size
+var PARTITION_SIZE = 256;   // Memory section size
 
 // PCB state
 var PROCESS_NEW     = 0;
 var PROCESS_LOADED  = 1;
 var PROCESS_READY   = 2;
 var PROCESS_RUNNING = 3;
-var PROCESS_STOPPED = 4;
+var PROCESS_WAITING = 4;
+var PROCESS_TERMINATED = 5;
 
 //
 // Global Variables
@@ -40,7 +42,7 @@ var _MemoryManager = null;
 var _RunningProcess = null;
 var _PID = 0;
 
-var _ProgramList = [];
+var _JobList = [];
 
 
 var _OSclock = 0;       // Page 23.
