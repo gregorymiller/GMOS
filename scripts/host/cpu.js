@@ -62,9 +62,10 @@ function Cpu() {
         this.Zflag = z;
     };
 
-    // Fetch the next byte in memory
+    // Fetch the next byte in memory add the base of the running process to make sure the correct partition
+    // is used
     this.fetch = function () {
-        return _Memory[this.PC];
+        return _Memory[this.PC + _RunningProcess.base];
     };
 
     // Execute the current byte in memory
@@ -152,7 +153,7 @@ function loadAccFromMem() {
     // If it is load the ACC else crash the OS
     if (_MemoryManager.isValidAddress(decAddr))
     {
-        _CPU.Acc = parseInt(_Memory[decAddr], 16);
+        _CPU.Acc = parseInt(_Memory[decAddr + _RunningProcess.base], 16);
     }
     else
     {
@@ -177,7 +178,7 @@ function storeAccInMem() {
     {
         // Convert the dec ACC to hex for storage
         var hex = _CPU.Acc.toString(16).toUpperCase();
-        _Memory[decAddr] = hex;
+        _Memory[decAddr + _RunningProcess.base] = hex;
     }
     else
     {
@@ -200,7 +201,7 @@ function addWithCarry() {
     // If it is add the memory to the ACC else crash the OS
     if (_MemoryManager.isValidAddress(decAddr))
     {
-        _CPU.Acc += parseInt(_Memory[decAddr], 16);
+        _CPU.Acc += parseInt(_Memory[decAddr + _RunningProcess.base], 16);
     }
     else
     {
@@ -230,7 +231,7 @@ function loadXRegFromMem() {
     // If it is load the XReg else crash the OS
     if (_MemoryManager.isValidAddress(decAddr))
     {
-        _CPU.Xreg = parseInt(_Memory[decAddr], 16);
+        _CPU.Xreg = parseInt(_Memory[decAddr + _RunningProcess.base], 16);
     }
     else
     {
@@ -260,7 +261,7 @@ function loadYRegFromMem() {
     // If it is load the Yreg else crash the OS
     if (_MemoryManager.isValidAddress(decAddr))
     {
-        _CPU.Yreg = parseInt(_Memory[decAddr], 16);
+        _CPU.Yreg = parseInt(_Memory[decAddr + _RunningProcess.base], 16);
     }
     else
     {
@@ -288,6 +289,9 @@ function systemBreak() {
     // Disable the step button if it was stepping
     document.getElementById("btnStep").disabled = true;
 
+    // Unlock the current section
+    _MemoryManager.toggleMemorySection(_RunningProcess.section);
+
     // Put a new prompt on the screen
     _StdOut.putText(_OsShell.promptStr);
 }
@@ -305,7 +309,7 @@ function compareXReg() {
     // If it is compare Xreg to memory location else crash the OS
     if (_MemoryManager.isValidAddress(decAddr))
     {
-        if (parseInt(_Memory[decAddr], 16) == _CPU.Xreg)
+        if (parseInt(_Memory[decAddr + _RunningProcess.base], 16) == _CPU.Xreg)
         {
             _CPU.Zflag = 1;
         }
@@ -358,12 +362,12 @@ function incrementByteVal() {
     // If it is increment the byte else crash the OS
     if (_MemoryManager.isValidAddress(decAddr))
     {
-        var decimalForm = parseInt(_Memory[decAddr], 16);
+        var decimalForm = parseInt(_Memory[decAddr + _RunningProcess.base], 16);
         decimalForm++;
 
         var hexForm = decimalForm.toString(16).toUpperCase();
 
-        _Memory[decAddr] = hexForm;
+        _Memory[decAddr + _RunningProcess.base] = hexForm;
     }
     else
     {
@@ -392,7 +396,7 @@ function systemCall() {
         var decAddr = parseInt(_CPU.Yreg);
 
         // Store the current byte in memory
-        var currentByte = _Memory[decAddr];
+        var currentByte = _Memory[decAddr + _RunningProcess.base];
 
         // Create keyCode and chr for use in loop
         var keyCode = 0;
@@ -409,7 +413,7 @@ function systemCall() {
 
             // Increment the address and get the next byte
             decAddr++;
-            currentByte = _Memory[decAddr];
+            currentByte = _Memory[decAddr + _RunningProcess.base];
         }
 
         // Advance a line after output is complete

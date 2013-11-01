@@ -118,11 +118,8 @@ function shellInit() {
         }
         else
         {
-            _StdOut.putText("Program loaded correctly");
-
             var pid = loadProgram(userText);
 
-            _Console.advanceLine();
             _StdOut.putText("PID: " + pid);
         }
     };
@@ -135,11 +132,11 @@ function shellInit() {
     sc.function = function(args) {
         if (args.length > 0)
         {
-            // Since we are only running one program so make sure the pids match
-            if ( args == _JobList[0].pid)
+            // Make sure that the pid given is a valid PID
+            if ( _JobList[args] != undefined || _JobList[args] != null )
             {
                 // Get the process from the program list and change state
-                _RunningProcess = _JobList[0];
+                _RunningProcess = _JobList[args];
                 _RunningProcess.state = PROCESS_RUNNING;
 
                 // Clear CPU and start executing
@@ -147,12 +144,40 @@ function shellInit() {
                 _CPU.isExecuting = true;
 
                 // Remove process
-                _JobList[0] = null;
+                _JobList[args] = null;
+            }
+            else
+            {
+                _StdOut.putText("Not a valid PID");
             }
         }
         else
         {
             _StdOut.putText("Usage: run <PID> Please supply a PID");
+        }
+    };
+    this.commandList[this.commandList.length] = sc;
+
+    // runall
+    sc = new ShellCommand();
+    sc.command = "runall";
+    sc.description = "- runs all the programs in memory";
+    sc.function = function() {
+        // For all the jobs in the job list put them in the job queue and then begin executing
+        for (var i in _JobList) {
+
+            if (i != undefined || i != null)
+            {
+                _ReadyQueue.enqueue(_JobList[i]);
+
+                _JobList[i] = null;
+            }
+
+            _RunningProcess = _ReadyQueue.dequeue();
+
+            // Clear CPU and start executing
+            _CPU.clearCPU();
+            _CPU.isExecuting = true;
         }
     };
     this.commandList[this.commandList.length] = sc;
@@ -164,11 +189,11 @@ function shellInit() {
     sc.function = function(args) {
         if (args.length > 0)
         {
-            // Since we are only running one program so make sure the pids match
-            if ( args == _JobList[0].pid)
+            // Make sure that the pid given is a valid PID
+            if ( _JobList[args] != undefined || _JobList[args] != null )
             {
                 // Get the process from the program list and change state
-                _RunningProcess = _JobList[0];
+                _RunningProcess = _JobList[args];
                 _RunningProcess.state = PROCESS_RUNNING;
 
                 // Clear CPU and start stepping
@@ -179,7 +204,11 @@ function shellInit() {
                 document.getElementById("btnStep").disabled = false;
 
                 // Remove process
-                _JobList[0] = null;
+                _JobList[args] = null;
+            }
+            else
+            {
+                _StdOut.putText("Not a valid PID");
             }
         }
         else
@@ -207,7 +236,23 @@ function shellInit() {
         }
         else
         {
-            _StdOut.putText("Usage: load <string>  Please supply a string.");
+            _StdOut.putText("Usage: status <string>  Please supply a string.");
+        }
+    };
+    this.commandList[this.commandList.length] = sc;
+
+    // quantum
+    sc = new ShellCommand();
+    sc.command = "quantum";
+    sc.description = "<int> - set the Round Robin quantum";
+    sc.function = function(args) {
+        if (args.length > 0)
+        {
+            QUANTUM = args;
+        }
+        else
+        {
+            _StdOut.putText("Usage: quantum <int>  Please supply a string.");
         }
     };
     this.commandList[this.commandList.length] = sc;
@@ -253,12 +298,50 @@ function shellInit() {
     };
     this.commandList[this.commandList.length] = sc;
 
-
-
     // processes - list the running processes and their IDs
-    // kill <id> - kills the specified process id.
+    sc = new ShellCommand();
+    sc.command = "processes";
+    sc.description = "- display PIDs of all active processes";
+    sc.function = function() {
+        _StdOut.putText("PID(s) ");
 
-    //
+        // If the CPU is not executing list the processes in memory else list the processes that are running
+        if(!_CPU.isExecuting)
+        {
+            _StdOut.putText("in memory: ");
+            for (var i = 0; i < _JobList.length; i++) {
+
+                if (_JobList[i] != undefined || _JobList[i] != null)
+                {
+                    _StdOut.putText(_JobList[i].pid.toString() + " ");
+                }
+            }
+        }
+        else
+        {
+            _StdOut.putText("running: ");
+            for (var i = 0; i < _ReadyQueue.length; i++) {
+
+                if (_ReadyQueue[i] != undefined || _ReadyQueue[i] != null)
+                {
+                    _StdOut.putText(_ReadyQueue[i].pid.toString() + " ");
+                }
+            }
+
+            _StdOut.putText(_RunningProcess.pid.toString());
+        }
+    };
+    this.commandList[this.commandList.length] = sc;
+
+    // kill <id> - kills the specified process id.
+    sc = new ShellCommand();
+    sc.command = "kill";
+    sc.description = "<PID> - kill process with the given PID";
+    sc.function = function() {
+
+    };
+    this.commandList[this.commandList.length] = sc;
+
     // Display the initial prompt.
     this.putPrompt();
 }
@@ -358,7 +441,7 @@ function shellParseInput(buffer)
 function shellExecute(fn, args, fnName)
 {
     // Changed so that it will not put prompts right after the command
-    if (fnName == "run" || fnName == "step" || fnName == "bsod")
+    if (fnName === "bsod")
     {
         // We just got a command, so advance the line...
         _StdIn.advanceLine();

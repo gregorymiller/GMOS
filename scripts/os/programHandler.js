@@ -8,22 +8,36 @@
 function loadProgram(txt) {
     // Get a new PCB for the program
     var process = newProcess();
-    txt = txt.split(" ");
 
-    // Load program into memory
-    _MemoryManager.loadMemorySection(process.section, txt);
+    // If the process is not null load the program into memory and add the process to the job list else return -1
+    if ( process )
+    {
+        txt = txt.split(" ");
 
-    // Change process state
-    process.state = PROCESS_LOADED;
+        // Load program into memory
+        _MemoryManager.loadMemorySection(process.section, txt);
 
-    // Update table with new memory
-    updateTable();
+        // Change process state
+        process.state = PROCESS_LOADED;
 
-    // Add the process to to the program list
-    // Only using 0 because for now there is only one program
-    _JobList[0] = process;
+        // Update table with new memory
+        updateTable();
 
-    return process.pid;
+        // Add the process to to the job list at the process's PID
+        _JobList[process.pid] = process;
+
+        _StdOut.putText("Program loaded correctly");
+        _StdOut.advanceLine();
+
+        // Change the state
+        process.state = PROCESS_READY;
+
+        return process.pid;
+    }
+    else
+    {
+        return -1;
+    }
 }
 
 function newProcess() {
@@ -33,16 +47,31 @@ function newProcess() {
     var base;
     var limit;
     var section;
+    var memorySection;
 
-    // Get the base, limit, and section for the first memory section
-    // Will expand for use with three memory sections
-    base = _MemoryManager.memorySections.one.base;
-    limit = _MemoryManager.memorySections.one.limit;
-    section = _MemoryManager.memorySections.one.section;
+    // Get the next open memory section
+    memorySection = _MemoryManager.getNextUnlockedSection();
 
-    // Clear the memory section you want to load the program in
-    _MemoryManager.clearMemorySection(1);
+    // If there are memory sections open then set the base, limit, and section
+    // Toggle the memory sections and then clear the memory section
+    // If there are no memory sections open display the output
+    if ( memorySection )
+    {
+        base = memorySection.base;
+        limit = memorySection.limit;
+        section = memorySection.section;
+        _MemoryManager.toggleMemorySection(section);
+        _MemoryManager.clearMemorySection(section);
 
+        return (new processControlBlock(state, pid, pc, base, limit, section));
+    }
+    else
+    {
+        _StdOut.putText("No open memory sections");
+        _StdOut.advanceLine();
+        _StdOut.putText("Program not loaded correctly");
+        _StdOut.advanceLine();
+    }
 
-    return (new processControlBlock(state, pid, pc, base, limit, section));
+    return null;
 }

@@ -31,10 +31,13 @@ var PROCESS_RUNNING = 3;
 var PROCESS_WAITING = 4;
 var PROCESS_TERMINATED = 5;
 
+var QUANTUM = 6;
+
 //
 // Global Variables
 //
 var _CPU = null;
+var _Cycle = 0;
 
 var _Memory = null;
 var _MemoryManager = null;
@@ -44,10 +47,10 @@ var _PID = 0;
 
 var _JobList = [];
 
+var _ReadyQueue = [];
+
 
 var _OSclock = 0;       // Page 23.
-
-var _Mode = 0;   // 0 = Kernel Mode, 1 = User Mode.  See page 21.
 
 var _Canvas = null;               // Initialized in hostInit().
 var _DrawingContext = null;       // Initialized in hostInit().
