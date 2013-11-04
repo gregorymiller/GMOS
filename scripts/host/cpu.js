@@ -93,7 +93,10 @@ function Cpu() {
         else if (opCode == "D0")    { branchXBytes();      }
         else if (opCode == "EE")    { incrementByteVal();  }
         else if (opCode == "FF")    { systemCall();        }
-        else                        { systemBreak();       }
+        else
+        {
+            _KernelInterruptQueue.enqueue( new Interrupt(INVALID_OP_IRQ, -1) );
+        }
     };
 }
 
@@ -121,7 +124,7 @@ function loadAccFromMem() {
     }
     else
     {
-        krnTrapError("Invalid memory request");
+        _KernelInterruptQueue.enqueue( new Interrupt(INVALID_MEM_IRQ, -1) );
     }
 
     _CPU.PC++;
@@ -146,7 +149,7 @@ function storeAccInMem() {
     }
     else
     {
-        krnTrapError("Invalid memory request");
+        _KernelInterruptQueue.enqueue( new Interrupt(INVALID_MEM_IRQ, -1) );
     }
 
     _CPU.PC++;
@@ -169,7 +172,7 @@ function addWithCarry() {
     }
     else
     {
-        krnTrapError("Invalid memory request");
+        _KernelInterruptQueue.enqueue( new Interrupt(INVALID_MEM_IRQ, -1) );
     }
 
     _CPU.PC++;
@@ -199,7 +202,7 @@ function loadXRegFromMem() {
     }
     else
     {
-        krnTrapError("Invalid memory request");
+        _KernelInterruptQueue.enqueue( new Interrupt(INVALID_MEM_IRQ, -1) );
     }
 
     _CPU.PC++;
@@ -229,7 +232,7 @@ function loadYRegFromMem() {
     }
     else
     {
-        krnTrapError("Invalid memory request");
+        _KernelInterruptQueue.enqueue( new Interrupt(INVALID_MEM_IRQ, -1) );
     }
 
     _CPU.PC++;
@@ -287,7 +290,7 @@ function compareXReg() {
     }
     else
     {
-        krnTrapError("Invalid memory request");
+        _KernelInterruptQueue.enqueue( new Interrupt(INVALID_MEM_IRQ, -1) );
     }
 
     _CPU.PC++;
@@ -338,7 +341,7 @@ function incrementByteVal() {
     }
     else
     {
-        krnTrapError("Invalid memory request");
+        _KernelInterruptQueue.enqueue( new Interrupt(INVALID_MEM_IRQ, -1) );
     }
 
     _CPU.PC++;

@@ -338,6 +338,7 @@ function shellInit() {
     sc.description = "<PID> - kill process with the given PID";
     sc.function = function(args) {
         var pid = args[0];
+        var removed = false;
 
         if (pid === null || pid === undefined)
         {
@@ -351,8 +352,8 @@ function shellInit() {
                 {
                     _StdOut.putText("PID " + pid.toString() + " killed");
                     _MemoryManager.toggleMemorySection(_ReadyQueue.get(i).section);
-                    _ReadyQueue.splice(i, 1);
-                    _CPU.isExecuting = false;
+                    _ReadyQueue.remove(i);
+                    removed = true;
                 }
             }
 
@@ -360,11 +361,14 @@ function shellInit() {
             {
                 _StdOut.putText("PID " + pid.toString() + " killed");
                 _MemoryManager.toggleMemorySection(_RunningProcess.section);
-                _RunningProcess = null;
+                _RunningProcess.update(PROCESS_TERMINATED, _CPU.PC, _CPU.Acc, _CPU.Xreg, _CPU.Yreg, _CPU.Zflag);
                 _CPU.isExecuting = false;
                 _CPU.isStepping = false;
+                _KernelInterruptQueue.enqueue( new Interrupt(SWITCH_IRQ, -1) );
+                removed = true;
             }
-            else
+
+            if (!removed)
             {
                 _StdOut.putText("PID not found");
             }

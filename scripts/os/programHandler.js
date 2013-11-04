@@ -14,6 +14,15 @@ function loadProgram(txt) {
     {
         txt = txt.split(" ");
 
+        if (txt.length >= PARTITION_SIZE)
+        {
+            _StdOut.putText("Program too large");
+            _StdOut.advanceLine();
+            _StdOut.putText("Program not loaded correctly");
+            _StdOut.advanceLine();
+            return -1;
+        }
+
         // Load program into memory
         _MemoryManager.loadMemorySection(process.section, txt);
 

@@ -139,6 +139,50 @@ function krnInterruptHandler(irq, params)    // This is the Interrupt Handler Ro
         case SWITCH_IRQ:
             _Scheduler.contextSwitch();
             break;
+        case INVALID_OP_IRQ:
+            hostLog("Invalid op code", "OS");
+
+            // Update the PCB of the process
+            _RunningProcess.update(PROCESS_TERMINATED, _CPU.PC, _CPU.Acc, _CPU.Xreg, _CPU.Yreg, _CPU.Zflag);
+
+            // Disable the step button if it was stepping
+            document.getElementById("btnStep").disabled = true;
+
+            // Unlock the current section
+            _MemoryManager.toggleMemorySection(_RunningProcess.section);
+
+
+            // Stop the CPU and stop stepping
+            _CPU.isExecuting = false;
+            _CPU.isStepping = false;
+
+            _KernelInterruptQueue.enqueue( new Interrupt(SWITCH_IRQ, -1) );
+
+            // Put a new prompt on the screen
+            _StdOut.putText(_OsShell.promptStr);
+            break;
+        case INVALID_MEM_IRQ:
+            hostLog("Invalid memory request", "OS");
+
+            // Update the PCB of the process
+            _RunningProcess.update(PROCESS_TERMINATED, _CPU.PC, _CPU.Acc, _CPU.Xreg, _CPU.Yreg, _CPU.Zflag);
+
+            // Disable the step button if it was stepping
+            document.getElementById("btnStep").disabled = true;
+
+            // Unlock the current section
+            _MemoryManager.toggleMemorySection(_RunningProcess.section);
+
+
+            // Stop the CPU and stop stepping
+            _CPU.isExecuting = false;
+            _CPU.isStepping = false;
+
+            _KernelInterruptQueue.enqueue( new Interrupt(SWITCH_IRQ, -1) );
+
+            // Put a new prompt on the screen
+            _StdOut.putText(_OsShell.promptStr);
+            break;
         default: 
             krnTrapError("Invalid Interrupt Request. irq=" + irq + " params=[" + params + "]");
     }

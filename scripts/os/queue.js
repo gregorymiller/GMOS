@@ -57,4 +57,8 @@ function Queue()
     this.get = function(index) {
         return this.q[index];
     };
+
+    this.remove = function(index) {
+        return this.q.splice(index, 1);
+    };
 }
