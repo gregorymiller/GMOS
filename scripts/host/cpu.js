@@ -46,12 +46,21 @@ function Cpu() {
         krnTrace("CPU cycle");
         // TODO: Accumulate CPU usage and profiling statistics here.
 
+        if (_Cycle >= QUANTUM)
+        {
+            _KernelInterruptQueue.enqueue( new Interrupt(SWITCH_IRQ, -1) );
+        }
+
         // Fetch and execute
         this.execute(this.fetch());
 
         // Update CPU and memory display
         updateCPUDisplay();
         updateTable();
+        updateReadyQueue();
+
+        // Increment the cycle
+        _Cycle++;
     };
 
     this.update = function (pc, acc, x, y, z) {
@@ -70,66 +79,21 @@ function Cpu() {
 
     // Execute the current byte in memory
     this.execute = function(opCode) {
-        if (opCode == "A9")
-        {
-            loadAccWithConst();
-        }
-        else if (opCode == "AD")
-        {
-            loadAccFromMem();
-        }
-        else if (opCode == "8D")
-        {
-            storeAccInMem();
-        }
-        else if (opCode == "6D")
-        {
-            addWithCarry();
-        }
-        else if (opCode == "A2")
-        {
-            loadXRegWithConst();
-        }
-        else if (opCode == "AE")
-        {
-            loadXRegFromMem();
-        }
-        else if (opCode == "A0")
-        {
-            loadYRegWithConst();
-        }
-        else if (opCode == "AC")
-        {
-            loadYRegFromMem();
-        }
-        else if (opCode == "EA")
-        {
-            noOperation();
-        }
-        else if (opCode == "00")
-        {
-            systemBreak();
-        }
-        else if (opCode == "EC")
-        {
-            compareXReg();
-        }
-        else if (opCode == "D0")
-        {
-            branchXBytes();
-        }
-        else if (opCode == "EE")
-        {
-            incrementByteVal();
-        }
-        else if (opCode == "FF")
-        {
-            systemCall();
-        }
-        else
-        {
-            systemBreak();
-        }
+        if (opCode == "A9")         { loadAccWithConst();  }
+        else if (opCode == "AD")    { loadAccFromMem();    }
+        else if (opCode == "8D")    { storeAccInMem();     }
+        else if (opCode == "6D")    { addWithCarry();      }
+        else if (opCode == "A2")    { loadXRegWithConst(); }
+        else if (opCode == "AE")    { loadXRegFromMem();   }
+        else if (opCode == "A0")    { loadYRegWithConst(); }
+        else if (opCode == "AC")    { loadYRegFromMem();   }
+        else if (opCode == "EA")    { noOperation();       }
+        else if (opCode == "00")    { systemBreak();       }
+        else if (opCode == "EC")    { compareXReg();       }
+        else if (opCode == "D0")    { branchXBytes();      }
+        else if (opCode == "EE")    { incrementByteVal();  }
+        else if (opCode == "FF")    { systemCall();        }
+        else                        { systemBreak();       }
     };
 }
 
@@ -282,15 +246,18 @@ function systemBreak() {
     // Update the PCB of the process
     _RunningProcess.update(PROCESS_TERMINATED, _CPU.PC, _CPU.Acc, _CPU.Xreg, _CPU.Yreg, _CPU.Zflag);
 
-    // Stop the CPU and stop stepping
-    _CPU.isExecuting = false;
-    _CPU.isStepping = false;
-
     // Disable the step button if it was stepping
     document.getElementById("btnStep").disabled = true;
 
     // Unlock the current section
     _MemoryManager.toggleMemorySection(_RunningProcess.section);
+
+
+    // Stop the CPU and stop stepping
+    _CPU.isExecuting = false;
+    _CPU.isStepping = false;
+
+    _KernelInterruptQueue.enqueue( new Interrupt(SWITCH_IRQ, -1) );
 
     // Put a new prompt on the screen
     _StdOut.putText(_OsShell.promptStr);

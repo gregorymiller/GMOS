@@ -42,4 +42,19 @@ function Queue()
         }
         return retVal;
     };
+
+    this.peek = function() {
+        if (this.q.length > 0)
+        {
+            return this.q[0];
+        }
+        else
+        {
+            return null;
+        }
+    };
+
+    this.get = function(index) {
+        return this.q[index];
+    };
 }

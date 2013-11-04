@@ -30,6 +30,7 @@
    <script type="text/javascript" src="scripts/os/memoryManager.js"></script>
    <script type="text/javascript" src="scripts/os/programHandler.js"></script>
    <script type="text/javascript" src="scripts/os/displayUpdater.js"></script>
+   <script type="text/javascript" src="scripts/os/scheduler.js"></script>
 
    <!-- Other Routines -->
    <script type="text/javascript" src="scripts/utils.js"></script>
@@ -153,7 +154,7 @@
    </div>
 
    <div id="divReadyQueueDisplay">
-       <table border ="1" style="table-layout:fixed; width:450px;">
+       <table id="readyQueue" border ="1" style="table-layout:fixed; width:450px;">
            <thead>Ready Queue</thead>
            <tr>
                 <td>PID</td>
@@ -162,16 +163,16 @@
                 <td>Limit</td>
            </tr>
            <tr id="readyQueueSlotOne">
-               <td name="RQ1PID">&nbsp;</td>
-               <td name="RQ1State">&nbsp;</td>
-               <td name="RQ1Base">&nbsp;</td>
-               <td name="RQ1Limit">&nbsp;</td>
+               <td id="RQ1PID">&nbsp;</td>
+               <td id="RQ1State">&nbsp;</td>
+               <td id="RQ1Base">&nbsp;</td>
+               <td id="RQ1Limit">&nbsp;</td>
            </tr>
            <tr id="readyQueueSlotTwo">
-               <td name="RQ2PID">&nbsp;</td>
-               <td name="RQ2State">&nbsp;</td>
-               <td name="RQ2Base">&nbsp;</td>
-               <td name="RQ2Limit">&nbsp;</td>
+               <td id="RQ2PID">&nbsp;</td>
+               <td id="RQ2State">&nbsp;</td>
+               <td id="RQ2Base">&nbsp;</td>
+               <td id="RQ2Limit">&nbsp;</td>
            </tr>
        </table>
    </div>

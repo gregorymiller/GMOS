@@ -42,6 +42,9 @@ function hostInit()
       _GLaDOS.init();
    };
 
+   // Initialize the schedule
+   _Scheduler = new Scheduler();
+
    // Create the memory table
    tableCreate();
 }

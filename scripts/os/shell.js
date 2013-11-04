@@ -166,19 +166,19 @@ function shellInit() {
         // For all the jobs in the job list put them in the job queue and then begin executing
         for (var i in _JobList) {
 
-            if (i != undefined || i != null)
+            if (_JobList[i] != undefined || _JobList[i] != null)
             {
                 _ReadyQueue.enqueue(_JobList[i]);
 
                 _JobList[i] = null;
             }
-
-            _RunningProcess = _ReadyQueue.dequeue();
-
-            // Clear CPU and start executing
-            _CPU.clearCPU();
-            _CPU.isExecuting = true;
         }
+
+        _RunningProcess = _ReadyQueue.dequeue();
+
+        // Clear CPU and start executing
+        _CPU.clearCPU();
+        _CPU.isExecuting = true;
     };
     this.commandList[this.commandList.length] = sc;
 
@@ -305,26 +305,25 @@ function shellInit() {
     sc.function = function() {
         _StdOut.putText("PID(s) ");
 
-        // If the CPU is not executing list the processes in memory else list the processes that are running
-        if(!_CPU.isExecuting)
-        {
-            _StdOut.putText("in memory: ");
-            for (var i = 0; i < _JobList.length; i++) {
+        // Print out the PIDs in memory
+        _StdOut.putText("in memory: ");
+        for (var i = 0; i < _JobList.length; i++) {
 
                 if (_JobList[i] != undefined || _JobList[i] != null)
                 {
                     _StdOut.putText(_JobList[i].pid.toString() + " ");
                 }
-            }
         }
-        else
-        {
-            _StdOut.putText("running: ");
-            for (var i = 0; i < _ReadyQueue.length; i++) {
 
-                if (_ReadyQueue[i] != undefined || _ReadyQueue[i] != null)
+        // If the cpu is executing print out the current processes running
+        if (_CPU.isExecuting || _CPU.isStepping)
+        {
+            _StdOut.putText(" running: ");
+            for (var i = 0; i < _ReadyQueue.getSize(); i++) {
+
+                if (_ReadyQueue.get(i) != undefined || _ReadyQueue.get(i) != null)
                 {
-                    _StdOut.putText(_ReadyQueue[i].pid.toString() + " ");
+                    _StdOut.putText(_ReadyQueue.get(i).pid.toString() + " ");
                 }
             }
 
@@ -333,12 +332,43 @@ function shellInit() {
     };
     this.commandList[this.commandList.length] = sc;
 
-    // kill <id> - kills the specified process id.
+    // kill <pid> - kills the specified process id.
     sc = new ShellCommand();
     sc.command = "kill";
     sc.description = "<PID> - kill process with the given PID";
-    sc.function = function() {
+    sc.function = function(args) {
+        var pid = args[0];
 
+        if (pid === null || pid === undefined)
+        {
+            _StdOut.putText("Usage: kill <pid>  Please supply a PID.")
+        }
+        else
+        {
+            for (var i = 0; i < _ReadyQueue.getSize(); i++) {
+
+                if (pid === _ReadyQueue.get(i).pid.toString())
+                {
+                    _StdOut.putText("PID " + pid.toString() + " killed");
+                    _MemoryManager.toggleMemorySection(_ReadyQueue.get(i).section);
+                    _ReadyQueue.splice(i, 1);
+                    _CPU.isExecuting = false;
+                }
+            }
+
+            if (pid === _RunningProcess.pid.toString())
+            {
+                _StdOut.putText("PID " + pid.toString() + " killed");
+                _MemoryManager.toggleMemorySection(_RunningProcess.section);
+                _RunningProcess = null;
+                _CPU.isExecuting = false;
+                _CPU.isStepping = false;
+            }
+            else
+            {
+                _StdOut.putText("PID not found");
+            }
+        }
     };
     this.commandList[this.commandList.length] = sc;
 

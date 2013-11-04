@@ -60,3 +60,59 @@ function updateTable() {
         }
     }
 }
+
+function updateReadyQueue() {
+    clearReadyQueue();
+
+    for (var i = 0; i < _ReadyQueue.getSize(); i++) {
+        if ((_ReadyQueue.get(i) != null || _ReadyQueue.get(i) != undefined) && i < 2)
+        {
+            document.getElementById("RQ" + (i + 1) + "PID").innerHTML     = _ReadyQueue.get(i).pid.toString();
+            document.getElementById("RQ" + (i + 1) + "State").innerHTML   = changeState(_ReadyQueue.get(i).state).toString();
+            document.getElementById("RQ" + (i + 1) + "Base").innerHTML    = "0x" + _ReadyQueue.get(i).base.toString(16).toUpperCase();
+            document.getElementById("RQ" + (i + 1) + "Limit").innerHTML   = "0x" + _ReadyQueue.get(i).limit.toString(16).toUpperCase();
+        }
+        else
+        {
+            document.getElementById("RQ" + (i + 1) + "PID").innerHTML     = "&nbsp;";
+            document.getElementById("RQ" + (i + 1) + "State").innerHTML   = "&nbsp;";
+            document.getElementById("RQ" + (i + 1) + "Base").innerHTML    = "&nbsp;";
+            document.getElementById("RQ" + (i + 1) + "Limit").innerHTML   = "&nbsp;";
+        }
+    }
+}
+
+function clearReadyQueue() {
+    // Get the table id
+    var table = document.getElementById("readyQueue");
+
+    // Update the rows with the new memory value
+    for (var r = 1; r < 3; r++) {
+        for (var c = 0; c < 4; c++) {
+            table.rows[r].cells[c].innerHTML = "&nbsp;";
+        }
+    }
+}
+
+function changeState(state) {
+    if (state === 0)
+    {
+        return "New";
+    }
+    else if (state === 1)
+    {
+        return "Loaded";
+    }
+    else if (state === 2)
+    {
+        return "Ready";
+    }
+    else if (state === 3)
+    {
+        return "Running";
+    }
+    else if (state === 4)
+    {
+        return "Terminated";
+    }
+}
