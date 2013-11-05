@@ -52,6 +52,11 @@ function Cpu() {
             _KernelInterruptQueue.enqueue( new Interrupt(SWITCH_IRQ, -1) );
         }
 
+        if (this.PC >= PARTITION_SIZE)
+        {
+            _KernelInterruptQueue.enqueue( new Interrupt(INVALID_MEM_IRQ, -1) );
+        }
+
         // Fetch and execute
         this.execute(this.fetch());
 

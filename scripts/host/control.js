@@ -42,9 +42,6 @@ function hostInit()
       _GLaDOS.init();
    };
 
-   // Initialize the schedule
-   _Scheduler = new Scheduler();
-
    // Create the memory table
    tableCreate();
 }
@@ -63,7 +60,7 @@ function hostLog(msg, source)
     var now = new Date().getTime();
 
     // Build the log string.   
-    var str = "({ clock:" + clock + ", source:" + source + ", msg:" + msg + ", now:" + now  + " })"  + "\n";    
+    var str = "({ clock:" + clock + ", source:" + source + ", msg:" + msg + ", now:" + now  + " })"  + "\n";
 
     // Update the log console.
     var taLog = document.getElementById("taLog");

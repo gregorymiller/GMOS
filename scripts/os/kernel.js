@@ -50,6 +50,9 @@ function krnBootstrap()      // Page 8.
    _OsShell = new Shell();
    _OsShell.init();
 
+    // Initialize the schedule
+    _Scheduler = new Scheduler();
+
    // Finally, initiate testing.
    if (_GLaDOS) {
       _GLaDOS.afterStartup();
