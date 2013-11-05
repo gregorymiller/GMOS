@@ -14,6 +14,7 @@ function loadProgram(txt) {
     {
         txt = txt.split(" ");
 
+        // If the program is larger than the available partition size then return -1
         if (txt.length >= PARTITION_SIZE)
         {
             _StdOut.putText("Program too large");

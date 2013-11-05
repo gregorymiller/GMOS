@@ -62,9 +62,12 @@ function updateTable() {
 }
 
 function updateReadyQueue() {
+    // First clear the ready queue for any finished processes
     clearReadyQueue();
 
+    // Go through the ready queue but only the first two because there are only two slots in the ready queue
     for (var i = 0; i < _ReadyQueue.getSize(); i++) {
+        // If the ready queue element exists update the ready queue otherwise fill it with spaces
         if ((_ReadyQueue.get(i) != null || _ReadyQueue.get(i) != undefined) && i < 2)
         {
             document.getElementById("RQ" + (i + 1) + "PID").innerHTML     = _ReadyQueue.get(i).pid.toString();
@@ -86,7 +89,7 @@ function clearReadyQueue() {
     // Get the table id
     var table = document.getElementById("readyQueue");
 
-    // Update the rows with the new memory value
+    // Update the rows with spaces to clear the table
     for (var r = 1; r < 3; r++) {
         for (var c = 0; c < 4; c++) {
             table.rows[r].cells[c].innerHTML = "&nbsp;";
@@ -94,6 +97,7 @@ function clearReadyQueue() {
     }
 }
 
+// Return the correct process state for the ready queue
 function changeState(state) {
     if (state === 0)
     {

@@ -163,7 +163,7 @@ function shellInit() {
     sc.command = "runall";
     sc.description = "- runs all the programs in memory";
     sc.function = function() {
-        // For all the jobs in the job list put them in the job queue and then begin executing
+        // For all the jobs in the job list put them in the ready queue and then begin executing
         for (var i in _JobList) {
 
             if (_JobList[i] != undefined || _JobList[i] != null)
@@ -174,6 +174,7 @@ function shellInit() {
             }
         }
 
+        // Get the first process for executing
         _RunningProcess = _ReadyQueue.dequeue();
 
         // Clear CPU and start executing
@@ -337,6 +338,7 @@ function shellInit() {
     sc.command = "kill";
     sc.description = "<PID> - kill process with the given PID";
     sc.function = function(args) {
+        // Get the pid provided and set the removed variable
         var pid = args[0];
         var removed = false;
 
@@ -346,28 +348,40 @@ function shellInit() {
         }
         else
         {
+            // Search the ready queue first for the pid
             for (var i = 0; i < _ReadyQueue.getSize(); i++) {
 
+                // If the pid is found toggle the memory selection, remove it from the ready queue
+                // and set the removed variable so it knows whether something has been removed
                 if (pid === _ReadyQueue.get(i).pid.toString())
                 {
                     _StdOut.putText("PID " + pid.toString() + " killed");
+
                     _MemoryManager.toggleMemorySection(_ReadyQueue.get(i).section);
                     _ReadyQueue.remove(i);
+
                     removed = true;
                 }
             }
 
+            // If the pid is the running process then toggle the memory, update the pcb, stop the cpu, queue a software
+            // interrupt if there are more process and set the removed variable
             if (pid === _RunningProcess.pid.toString())
             {
                 _StdOut.putText("PID " + pid.toString() + " killed");
+
                 _MemoryManager.toggleMemorySection(_RunningProcess.section);
                 _RunningProcess.update(PROCESS_TERMINATED, _CPU.PC, _CPU.Acc, _CPU.Xreg, _CPU.Yreg, _CPU.Zflag);
+
                 _CPU.isExecuting = false;
                 _CPU.isStepping = false;
+
                 _KernelInterruptQueue.enqueue( new Interrupt(SWITCH_IRQ, -1) );
+
                 removed = true;
             }
 
+            // If nothing is removed
             if (!removed)
             {
                 _StdOut.putText("PID not found");

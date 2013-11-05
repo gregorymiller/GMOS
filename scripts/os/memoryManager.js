@@ -34,7 +34,7 @@ function memoryManager()
     this.isValidAddress = function(address) {
         var base = _RunningProcess.base;
         var limit = _RunningProcess.limit;
-        return ( (address + base) >= base && (address + base) <= limit );
+        return ( address >= base && address <= limit );
     };
 
     // Get the next byte in memory
@@ -131,6 +131,11 @@ function memoryManager()
         {
             return null;
         }
+    };
+
+    // Translate the address given to its right section
+    this.translateAddress = function(address) {
+        return (address + _RunningProcess.base);
     };
 
 }

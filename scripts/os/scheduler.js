@@ -7,8 +7,10 @@
 function Scheduler()
 {
     this.contextSwitch = function() {
+        // Check to make sure that there is something next in the ready queue
         if (_ReadyQueue.peek())
         {
+            // If the process has not finished running update its pcb and put it back on the ready queue
             if (_RunningProcess.state != PROCESS_TERMINATED)
             {
                 _RunningProcess.update(PROCESS_READY, _CPU.PC, _CPU.Acc, _CPU.Xreg, _CPU.Yreg, _CPU.Zflag);
@@ -16,11 +18,16 @@ function Scheduler()
                 _ReadyQueue.enqueue(_RunningProcess);
             }
 
+            // Get the next process in the queue
             _RunningProcess = _ReadyQueue.dequeue();
 
+            // Clear and update the cpu with the process information
             _CPU.clearCPU();
-            _CPU.update(_RunningProcess.pc, _RunningProcess.Acc, _RunningProcess.Xreg, _RunningProcess.Yreg, _RunningProcess.Zflag);
+            _CPU.update(_RunningProcess.pc, _RunningProcess.Acc, _RunningProcess.Xreg, _RunningProcess.Yreg,
+                _RunningProcess.Zflag);
 
+            // If the cpu is stopped because a program terminated from finishing execution
+            // or being killed restart the cpu
             if (!_CPU.isExecuting)
             {
                 _CPU.isExecuting = true;
@@ -29,6 +36,7 @@ function Scheduler()
             hostLog("Context Switch to PID: " + _RunningProcess.pid.toString(), "OS");
         }
 
+        // Even if there is not a context switch reset the cycle count so a single program can continue execution
         _Cycle = 0;
     };
 }

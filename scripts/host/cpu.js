@@ -46,6 +46,7 @@ function Cpu() {
         krnTrace("CPU cycle");
         // TODO: Accumulate CPU usage and profiling statistics here.
 
+        // If the cycle count is bigger than the quantum then create a software interrupt to context switch
         if (_Cycle >= QUANTUM)
         {
             _KernelInterruptQueue.enqueue( new Interrupt(SWITCH_IRQ, -1) );
@@ -54,7 +55,7 @@ function Cpu() {
         // Fetch and execute
         this.execute(this.fetch());
 
-        // Update CPU and memory display
+        // Update CPU, memory, and ready queue display
         updateCPUDisplay();
         updateTable();
         updateReadyQueue();
@@ -74,10 +75,10 @@ function Cpu() {
     // Fetch the next byte in memory add the base of the running process to make sure the correct partition
     // is used
     this.fetch = function () {
-        return _Memory[this.PC + _RunningProcess.base];
+        return _Memory[_MemoryManager.translateAddress(this.PC)];
     };
 
-    // Execute the current byte in memory
+    // Execute the current byte in memory if it is not a correct op code queue a invalid op code interrupt
     this.execute = function(opCode) {
         if (opCode == "A9")         { loadAccWithConst();  }
         else if (opCode == "AD")    { loadAccFromMem();    }
@@ -114,13 +115,13 @@ function loadAccFromMem() {
     var two = _MemoryManager.getNextByte();
 
     // Get the correct decimal address in the correct order
-    var decAddr = parseInt((two + one), 16);
+    var decAddr = _MemoryManager.translateAddress(parseInt((two + one), 16));
 
     // Check if it is valid
-    // If it is load the ACC else crash the OS
+    // If it is load the ACC else queue an invalid memory request interrupt
     if (_MemoryManager.isValidAddress(decAddr))
     {
-        _CPU.Acc = parseInt(_Memory[decAddr + _RunningProcess.base], 16);
+        _CPU.Acc = parseInt(_Memory[decAddr], 16);
     }
     else
     {
@@ -137,15 +138,15 @@ function storeAccInMem() {
     var two = _MemoryManager.getNextByte();
 
     // Get the correct decimal address in the correct order
-    var decAddr = parseInt((two + one), 16);
+    var decAddr = _MemoryManager.translateAddress(parseInt((two + one), 16));
 
     // Check if it is valid
-    // If it is store the ACC in memory else crash the OS
+    // If it is store the ACC in memory else queue an invalid memory request interrupt
     if (_MemoryManager.isValidAddress(decAddr))
     {
         // Convert the dec ACC to hex for storage
         var hex = _CPU.Acc.toString(16).toUpperCase();
-        _Memory[decAddr + _RunningProcess.base] = hex;
+        _Memory[decAddr] = hex;
     }
     else
     {
@@ -162,13 +163,13 @@ function addWithCarry() {
     var two = _MemoryManager.getNextByte();
 
     // Get the correct decimal address in the correct order
-    var decAddr = parseInt((two + one), 16);
+    var decAddr = _MemoryManager.translateAddress(parseInt((two + one), 16));
 
     // Check if it is valid
-    // If it is add the memory to the ACC else crash the OS
+    // If it is add the memory to the ACC else queue an invalid memory request interrupt
     if (_MemoryManager.isValidAddress(decAddr))
     {
-        _CPU.Acc += parseInt(_Memory[decAddr + _RunningProcess.base], 16);
+        _CPU.Acc += parseInt(_Memory[decAddr], 16);
     }
     else
     {
@@ -192,13 +193,13 @@ function loadXRegFromMem() {
     var two = _MemoryManager.getNextByte();
 
     // Get the correct decimal address in the correct order
-    var decAddr = parseInt((two + one), 16);
+    var decAddr = _MemoryManager.translateAddress(parseInt((two + one), 16));
 
     // Check if it is valid
-    // If it is load the XReg else crash the OS
+    // If it is load the XReg else queue an invalid memory request interrupt
     if (_MemoryManager.isValidAddress(decAddr))
     {
-        _CPU.Xreg = parseInt(_Memory[decAddr + _RunningProcess.base], 16);
+        _CPU.Xreg = parseInt(_Memory[decAddr], 16);
     }
     else
     {
@@ -222,13 +223,13 @@ function loadYRegFromMem() {
     var two = _MemoryManager.getNextByte();
 
     // Get the correct decimal address in the correct order
-    var decAddr = parseInt((two + one), 16);
+    var decAddr = _MemoryManager.translateAddress(parseInt((two + one), 16));
 
     // Check if it is valid
-    // If it is load the Yreg else crash the OS
+    // If it is load the Yreg else queue an invalid memory request interrupt
     if (_MemoryManager.isValidAddress(decAddr))
     {
-        _CPU.Yreg = parseInt(_Memory[decAddr + _RunningProcess.base], 16);
+        _CPU.Yreg = parseInt(_Memory[decAddr], 16);
     }
     else
     {
@@ -273,13 +274,13 @@ function compareXReg() {
     var two = _MemoryManager.getNextByte();
 
     // Get the correct decimal address in the correct order
-    var decAddr = parseInt((two + one), 16);
+    var decAddr = _MemoryManager.translateAddress(parseInt((two + one), 16));
 
     // Check if it is valid
-    // If it is compare Xreg to memory location else crash the OS
+    // If it is compare Xreg to memory location else queue an invalid memory request interrupt
     if (_MemoryManager.isValidAddress(decAddr))
     {
-        if (parseInt(_Memory[decAddr + _RunningProcess.base], 16) == _CPU.Xreg)
+        if (parseInt(_Memory[decAddr], 16) == _CPU.Xreg)
         {
             _CPU.Zflag = 1;
         }
@@ -326,18 +327,18 @@ function incrementByteVal() {
     var two = _MemoryManager.getNextByte();
 
     // Get the correct decimal address in the correct order
-    var decAddr = parseInt((two + one), 16);
+    var decAddr = _MemoryManager.translateAddress(parseInt((two + one), 16));
 
     // Check if it is valid
-    // If it is increment the byte else crash the OS
+    // If it is increment the byte else queue an invalid memory request interrupt
     if (_MemoryManager.isValidAddress(decAddr))
     {
-        var decimalForm = parseInt(_Memory[decAddr + _RunningProcess.base], 16);
+        var decimalForm = parseInt(_Memory[decAddr], 16);
         decimalForm++;
 
         var hexForm = decimalForm.toString(16).toUpperCase();
 
-        _Memory[decAddr + _RunningProcess.base] = hexForm;
+        _Memory[decAddr] = hexForm;
     }
     else
     {
@@ -363,10 +364,10 @@ function systemCall() {
     else if (_CPU.Xreg == 2)
     {
         // Get the dec address of the hex value stored in the Yreg
-        var decAddr = parseInt(_CPU.Yreg);
+        var decAddr = _MemoryManager.translateAddress(parseInt(_CPU.Yreg));
 
         // Store the current byte in memory
-        var currentByte = _Memory[decAddr + _RunningProcess.base];
+        var currentByte = _Memory[decAddr];
 
         // Create keyCode and chr for use in loop
         var keyCode = 0;
@@ -383,7 +384,7 @@ function systemCall() {
 
             // Increment the address and get the next byte
             decAddr++;
-            currentByte = _Memory[decAddr + _RunningProcess.base];
+            currentByte = _Memory[decAddr];
         }
 
         // Advance a line after output is complete
