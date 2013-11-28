@@ -44,6 +44,9 @@ function hostInit()
 
    // Create the memory table
    tableCreate();
+
+   // Test display for file system
+   createFileSystemDisplay();
 }
 
 function hostLog(msg, source)

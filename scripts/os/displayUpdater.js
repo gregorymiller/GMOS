@@ -120,3 +120,39 @@ function changeState(state) {
         return "Terminated";
     }
 }
+
+function createFileSystemDisplay() {
+    var table = document.getElementById("fileSystem");
+    var i = 0;
+
+    for (var r = 0; r < 255; r++) {
+        // Create the first column separate from the rest to display the track, sector, and block
+        var row = table.insertRow(-1);
+        var firstCell = row.insertCell(-1);
+        firstCell.appendChild(document.createTextNode("" + i));
+
+        var txt = "\"";
+        for (var s = 0; s < 63; s++) {
+            txt += "~";
+        }
+        txt += "\"";
+
+        var cell = row.insertCell(-1);
+        cell.appendChild(document.createTextNode("" + txt));
+        i++;
+
+    }
+}
+
+function toggleCollapse(id) {
+    var div = document.getElementById(id);
+
+    if (div.style.display === "none")
+    {
+        div.style.display = "block";
+    }
+    else
+    {
+        div.style.display = "none";
+    }
+}

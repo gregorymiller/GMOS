@@ -1,4 +1,4 @@
-/* alanbbos.css */
+/* GMOS.css */
 
 body {
     background: #FFFFFF;
@@ -28,10 +28,6 @@ h3 {
 	font-size: 16pt;
 	font-weight: normal;
 	font-style: normal;	
-}
-
-#wrapper {
-    float: left;
 }
 
 #divConsole {

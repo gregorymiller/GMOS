@@ -34,7 +34,7 @@
 
    <!-- Other Routines -->
    <script type="text/javascript" src="scripts/utils.js"></script>
-   <script type="text/javascript" src="http://www.labouseur.com/courses/os/projects/glados.js"></script>
+   <!-- <script type="text/javascript" src="http://www.labouseur.com/courses/os/projects/glados.js"></script> -->
 </head>
 
 <body onload="hostInit();">
@@ -78,103 +78,116 @@
              onclick="hostBtnStep_click(this);">
    </div>
 
-   <div id="wrapper">
-       <div id="divConsole">
-          <canvas id="display"
-                  width="500px"
-                  height="500px"
-                  tabindex="3">
-          </canvas>
+
+   <div id="divConsole" style="float:left;">
+      <canvas id="display"
+              width="500px"
+              height="500px"
+              tabindex="3">
+      </canvas>
+   </div>
+
+   <div id="divInputOutput" style="float:left;">
+       <div id="divLog">
+          <label>
+             Log
+             <br>
+             <textarea name="taLog"
+                       id  ="taLog"
+                       rows="26"
+                       cols="48"
+             ></textarea>
+          </label>
        </div>
 
-       <label> Memory Display </label>
-       <div id="divMemoryDisplay" style="width:470px; height:250px; overflow-y:auto;">
+       <div id="divUserProgramInput">
+          <label>
+             User Program Input
+             <br>
+             <textarea name="taProgramInput"
+                       id  ="taProgramInput"
+                       rows="8"
+                       cols="48"
+             ></textarea>
+          </label>
+       </div>
+   </div>
+
+   <div id="divDisplay" style="float:left; margin-left:5px;">
+       <div id="divCPUDisplay">
+               <table border="1" style="table-layout:fixed; width:200px;">
+                   <thead>CPU</thead>
+                   <col width="75">
+                   <col width="75">
+                   <col width="75">
+                   <tr>
+                       <td>PC</td>
+                       <td id="CPUPCHEX"></td>
+                       <td id="CPUPCDEC"></td>
+                   </tr>
+                   <tr>
+                       <td>ACC</td>
+                       <td id="CPUACCHEX"></td>
+                       <td id="CPUACCDEC"></td>
+                   </tr>
+                   <tr>
+                       <td>X</td>
+                       <td id="CPUXHEX"></td>
+                       <td id="CPUXDEC"></td>
+                   </tr>
+                   <tr>
+                       <td>Y</td>
+                       <td id="CPUYHEX"></td>
+                       <td id="CPUYDEC"></td>
+                   </tr>
+                   <tr>
+                       <td>Z</td>
+                       <td id="CPUZHEX"></td>
+                       <td id="CPUZDEC"></td>
+                   </tr>
+               </table>
+       </div>
+
+       <br>
+       <div id="divReadyQueueDisplay">
+           <table id="readyQueue" border ="1" style="table-layout:fixed; width:450px;">
+               <thead>Ready Queue</thead>
+               <tr>
+                    <td>PID</td>
+                    <td>State</td>
+                    <td>Base</td>
+                    <td>Limit</td>
+               </tr>
+               <tr id="readyQueueSlotOne">
+                   <td id="RQ1PID">&nbsp;</td>
+                   <td id="RQ1State">&nbsp;</td>
+                   <td id="RQ1Base">&nbsp;</td>
+                   <td id="RQ1Limit">&nbsp;</td>
+               </tr>
+               <tr id="readyQueueSlotTwo">
+                   <td id="RQ2PID">&nbsp;</td>
+                   <td id="RQ2State">&nbsp;</td>
+                   <td id="RQ2Base">&nbsp;</td>
+                   <td id="RQ2Limit">&nbsp;</td>
+               </tr>
+           </table>
+       </div>
+
+       <br>
+       <span onclick="toggleCollapse('divMemoryDisplay');" sytle="cursor:pointer;">Memory Display</span>
+       <div id="divMemoryDisplay" style="width:470px; height:254px; overflow-y:auto; display:none;">
            <table id="memory" border="1" width="450" style="table-layout:fixed; text-align:center;">
                <col width="75">
            </table>
        </div>
-   </div>
 
-   <div id="divLog" style="margin-left:520px;">
-      <label>
-         Log
-         <br>
-         <textarea name="taLog"
-                   id  ="taLog"
-                   rows="26"
-                   cols="48"
-         ></textarea>
-      </label>
-   </div>
-
-   <div id="divUserProgramInput" style="margin-left:520px;">
-      <label>
-         User Program Input
-         <br>
-         <textarea name="taProgramInput"
-                   id  ="taProgramInput"
-                   rows="8"
-                   cols="48"
-         ></textarea>
-      </label>
-   </div>
-
-   <div id="divCPUDisplay" style="margin-left:535px;">
-           <table border="1" style="table-layout:fixed; width:200px;">
-               <thead>CPU</thead>
+       <br>
+       <span onclick="toggleCollapse('divFileSystem');" sytle="cursor:pointer;">File System</span>
+       <div id="divFileSystem" style="width:470px; height:254px; overflow-y:auto; display:none;">
+           <table id="fileSystem" border="1" width="450" style="table-layout:fixed; text-align:center; font-size:7pt;">
                <col width="75">
-               <col width="75">
-               <col width="75">
-               <tr>
-                   <td>PC</td>
-                   <td id="CPUPCHEX"></td>
-                   <td id="CPUPCDEC"></td>
-               </tr>
-               <tr>
-                   <td>ACC</td>
-                   <td id="CPUACCHEX"></td>
-                   <td id="CPUACCDEC"></td>
-               </tr>
-               <tr>
-                   <td>X</td>
-                   <td id="CPUXHEX"></td>
-                   <td id="CPUXDEC"></td>
-               </tr>
-               <tr>
-                   <td>Y</td>
-                   <td id="CPUYHEX"></td>
-                   <td id="CPUYDEC"></td>
-               </tr>
-               <tr>
-                   <td>Z</td>
-                   <td id="CPUZHEX"></td>
-                   <td id="CPUZDEC"></td>
-               </tr>
            </table>
-   </div>
-
-   <div id="divReadyQueueDisplay">
-       <table id="readyQueue" border ="1" style="table-layout:fixed; width:450px;">
-           <thead>Ready Queue</thead>
-           <tr>
-                <td>PID</td>
-                <td>State</td>
-                <td>Base</td>
-                <td>Limit</td>
-           </tr>
-           <tr id="readyQueueSlotOne">
-               <td id="RQ1PID">&nbsp;</td>
-               <td id="RQ1State">&nbsp;</td>
-               <td id="RQ1Base">&nbsp;</td>
-               <td id="RQ1Limit">&nbsp;</td>
-           </tr>
-           <tr id="readyQueueSlotTwo">
-               <td id="RQ2PID">&nbsp;</td>
-               <td id="RQ2State">&nbsp;</td>
-               <td id="RQ2Base">&nbsp;</td>
-               <td id="RQ2Limit">&nbsp;</td>
-           </tr>
-       </table>
+       </div>
    </div>
 
    <div id="footerBar">
