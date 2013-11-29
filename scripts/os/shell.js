@@ -390,6 +390,49 @@ function shellInit() {
     };
     this.commandList[this.commandList.length] = sc;
 
+    // format - formats the files system
+    sc = new ShellCommand();
+    sc.command = "format";
+    sc.description = "- formats the file system";
+    sc.function = function() {
+        var formatCheck = krnFileSystemDriver.format();
+
+        // Check for a successful format and if so update the display
+        if (formatCheck)
+        {
+            _StdOut.putText("Format successful");
+            updateFileSystemDisplay();
+        }
+        else
+        {
+            _StdOut.putText("Format unsuccessful");
+        }
+    };
+    this.commandList[this.commandList.length] = sc;
+
+    // create - creates a file in the files system
+    sc = new ShellCommand();
+    sc.command = "create";
+    sc.description = "<filename> - creates a file in the file system";
+    sc.function = function(args) {
+        // Create a file with the given file name and update the display
+        krnFileSystemDriver.create(args[0]);
+
+        updateFileSystemDisplay();
+
+        // Need to do checking for correct parameters and successful file creation
+        /*if (formatCheck)
+        {
+            _StdOut.putText("File creation successful");
+            updateFileSystemDisplay();
+        }
+        else
+        {
+            _StdOut.putText("File creation unsuccessful");
+        }*/
+    };
+    this.commandList[this.commandList.length] = sc;
+
     // Display the initial prompt.
     this.putPrompt();
 }

@@ -37,6 +37,12 @@ function krnBootstrap()      // Page 8.
    krnKeyboardDriver.driverEntry();                    // Call the driverEntry() initialization routine.
    krnTrace(krnKeyboardDriver.status);
 
+   // Load the File System Driver
+   krnTrace("Loading the file system device driver.");
+   krnFileSystemDriver = new DeviceDriverFileSystem();
+   krnFileSystemDriver.driverEntry();
+   krnTrace(krnFileSystemDriver.status);
+
    //
    // ... more?
    //

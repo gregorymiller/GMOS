@@ -123,24 +123,39 @@ function changeState(state) {
 
 function createFileSystemDisplay() {
     var table = document.getElementById("fileSystem");
-    var i = 0;
 
-    for (var r = 0; r < 255; r++) {
+    for (var r = 0; r < PARTITION_SIZE; r++) {
         // Create the first column separate from the rest to display the track, sector, and block
         var row = table.insertRow(-1);
         var firstCell = row.insertCell(-1);
-        firstCell.appendChild(document.createTextNode("" + i));
+        firstCell.appendChild(document.createTextNode("\u00A0"));
 
-        var txt = "\"";
-        for (var s = 0; s < 63; s++) {
-            txt += "~";
+        // Color the first cell of the file space differently
+        if(r == 64)
+        {
+            firstCell.style.background="#C0C0C0";
         }
-        txt += "\"";
 
         var cell = row.insertCell(-1);
-        cell.appendChild(document.createTextNode("" + txt));
-        i++;
+        cell.appendChild(document.createTextNode("\u00A0"));
+    }
+}
 
+function updateFileSystemDisplay() {
+    var table = document.getElementById("fileSystem");
+    var r = 0;
+
+    for (var i in localStorage) {
+        // Get each individual cell
+        var cellKey = table.rows[r].cells[0];
+        var cellValue = table.rows[r].cells[1];
+
+        // Update the cells with the key and the value from local storage
+        cellKey.innerHTML = "" + i;
+        cellValue.innerHTML = "" + localStorage[i];
+
+        // Increase to keep track of the row
+        r++;
     }
 }
 

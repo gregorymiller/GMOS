@@ -26,6 +26,12 @@ var INVALID_MEM_IRQ = 4;
 var TOTAL_MEMORY = 768;     // Total memory size
 var PARTITION_SIZE = 256;   // Memory section size
 
+// File system global variables
+var TRACK_SIZE = 4;
+var SECTOR_SIZE = 8;
+var BLOCK_SIZE = 8;
+var MBR = "[0,0,0]";
+
 // PCB state
 var PROCESS_NEW     = 0;
 var PROCESS_LOADED  = 1;
@@ -87,6 +93,7 @@ var _SarcasticMode = false;
 
 // Global Device Driver Objects - page 12
 var krnKeyboardDriver = null;
+var krnFileSystemDriver = null;
 
 // For testing...
 var _GLaDOS = null;
