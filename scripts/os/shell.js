@@ -470,6 +470,95 @@ function shellInit() {
     };
     this.commandList[this.commandList.length] = sc;
 
+    // read - reads from a file in the file system
+    sc = new ShellCommand();
+    sc.command = "read";
+    sc.description = "<filename> - reads from a file in the file system";
+    sc.function = function(args) {
+        if (args.length > 0)
+        {
+            var fileName = args[0];
+
+            // Get the data from the file name
+            var readData = krnFileSystemDriver.read(fileName);
+
+            // If it was a successful read then print out the data
+            if (readData != null)
+            {
+                // Print out one character at a time so the text will wrap if it is too long
+                for (var i = 0; i < readData.length; i++) {
+                    _StdOut.putText("" + readData.substring(i, (i + 1)));
+                }
+            }
+            else
+            {
+                _StdOut.putText("Read unsuccessful");
+            }
+        }
+        else
+        {
+            _StdOut.putText("Usage: read <filename> Please supply a string.");
+        }
+    };
+    this.commandList[this.commandList.length] = sc;
+
+    // delete - deletes a file in the file system
+    sc = new ShellCommand();
+    sc.command = "delete";
+    sc.description = "<filename> - deletes a file in the file system";
+    sc.function = function(args) {
+        if (args.length > 0)
+        {
+            var fileName = args[0];
+
+            // Delete a file with the given file name and update the display
+            var deleteCheck = krnFileSystemDriver.delete(fileName);
+
+            if (deleteCheck)
+            {
+                _StdOut.putText("Delete successful");
+                updateFileSystemDisplay();
+            }
+            else
+            {
+                _StdOut.putText("Delete unsuccessful");
+            }
+        }
+        else
+        {
+            _StdOut.putText("Usage: delete <filename> Please supply a string.");
+        }
+    };
+    this.commandList[this.commandList.length] = sc;
+
+    // ls - lists all the files in the file system
+    sc = new ShellCommand();
+    sc.command = "ls";
+    sc.description = "- lists all the files in the file system";
+    sc.function = function() {
+        // Get the data from the file name
+        var fileNameData = krnFileSystemDriver.listFiles();
+
+        // If there are files in memory print out their names
+        if (fileNameData != null)
+        {
+            // For each file name print out one character at a time so the text will wrap if it is too long
+            for (var i = 0; i < fileNameData.length; i++) {
+                for (var j = 0; j < fileNameData[i].length; j++) {
+                    _StdOut.putText("" + fileNameData[i].substring(j, (j + 1)));
+                }
+
+                // Add a space between file names
+                _StdOut.putText(" ");
+            }
+        }
+        else
+        {
+            _StdOut.putText("No files in memory");
+        }
+    };
+    this.commandList[this.commandList.length] = sc;
+
     // Display the initial prompt.
     this.putPrompt();
 }

@@ -31,7 +31,7 @@ var TRACK_SIZE = 4;
 var SECTOR_SIZE = 8;
 var BLOCK_SIZE = 8;
 var MBR = "[0,0,0]";
-var DEFAULT_TSB = [-1, -1, -1];
+var DEFAULT_TSB = [-1,-1,-1];
 
 // PCB state
 var PROCESS_NEW     = 0;
