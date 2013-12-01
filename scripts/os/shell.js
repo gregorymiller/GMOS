@@ -410,26 +410,63 @@ function shellInit() {
     };
     this.commandList[this.commandList.length] = sc;
 
-    // create - creates a file in the files system
+    // create - creates a file in the file system
     sc = new ShellCommand();
     sc.command = "create";
     sc.description = "<filename> - creates a file in the file system";
     sc.function = function(args) {
-        // Create a file with the given file name and update the display
-        krnFileSystemDriver.create(args[0]);
-
-        updateFileSystemDisplay();
-
-        // Need to do checking for correct parameters and successful file creation
-        /*if (formatCheck)
+        if (args.length > 0)
         {
-            _StdOut.putText("File creation successful");
-            updateFileSystemDisplay();
+            // Create a file with the given file name and update the display
+            var createCheck = krnFileSystemDriver.create(args[0]);
+
+            if (createCheck)
+            {
+                _StdOut.putText("Creation successful");
+                updateFileSystemDisplay();
+            }
+            else
+            {
+                _StdOut.putText("Creation unsuccessful");
+            }
         }
         else
         {
-            _StdOut.putText("File creation unsuccessful");
-        }*/
+            _StdOut.putText("Usage: create <filename>  Please supply a string.");
+        }
+    };
+    this.commandList[this.commandList.length] = sc;
+
+    // write - writes to a file in the file system
+    sc = new ShellCommand();
+    sc.command = "write";
+    sc.description = "<filename> <data> - writes to a file in the file system";
+    sc.function = function(args) {
+        if (args.length > 0)
+        {
+            var fileName = args[0];
+            var data = "";
+            for (var i = 1; i < args.length; i++) {
+                data += "" + args[i] + " ";
+            }
+
+            // Write to a file with the given file name and update the display
+            var writeCheck = krnFileSystemDriver.write(fileName, data);
+
+            if (writeCheck)
+            {
+                _StdOut.putText("Write successful");
+                updateFileSystemDisplay();
+            }
+            else
+            {
+                _StdOut.putText("Write unsuccessful");
+            }
+        }
+        else
+        {
+            _StdOut.putText("Usage: write <filename> <data> Please supply a string.");
+        }
     };
     this.commandList[this.commandList.length] = sc;
 
