@@ -28,6 +28,7 @@ function DeviceDriverFileSystem()
     this.checkMBR = krnCheckMBR;
     this.incrementMBRValue = krnIncrementMBRValue;
     this.getDirectoryFromFileName = krnGetDirectoryFromFileName;
+    this.deleteAllLinkedBlocks = krnDeleteAllLinkedBlocks;
 }
 
 function krnFileSystemDriverEntry() {
@@ -98,7 +99,7 @@ function krnCreate(fileName) {
         return false;
     }
     // Make sure the file name does not exceed the byte limit
-    else if (fileName.length < 61)
+    else if (fileName.length < MAX_DATA)
     {
         // Set the file directory and change the file location to occupied
         localStorage[directoryLocation] = krnSetValue(1, fileLocation.replace(/[[\],]/g, ""), fileName.toLowerCase());
@@ -128,6 +129,10 @@ function krnWrite(fileName, data) {
     // If the location exists then write to it else log an error
     if (directoryLocation != null)
     {
+        // Delete all previously linked blocks since write is overwrite and we do not want
+        // to leave any left over children that can't be deleted
+        krnDeleteAllLinkedBlocks(fileName);
+
         // Get the track, sector, and block of the file location
         var value = JSON.parse(localStorage[directoryLocation]);
 
@@ -138,7 +143,7 @@ function krnWrite(fileName, data) {
         var fileLocation = JSON.stringify([track, sector, block]);
 
         // If the data is less than 60 bytes only allocate one block
-        if (data.length < 61)
+        if (data.length < MAX_DATA)
         {
             localStorage[fileLocation] = krnSetValue(1, DEFAULT_TSB, data.toLowerCase().trim());
 
@@ -155,16 +160,16 @@ function krnWrite(fileName, data) {
                 var nextBlock = krnGetNextOpenFile();
 
                 // Get the data
-                var tempData = data.substring((i * 60), ((i + 1) * 60));
+                var tempData = data.substring((i * (MAX_DATA - 1)), ((i + 1) * (MAX_DATA - 1)));
 
                 // If it is the last block don't give it another file to point to otherwise add the next block
                 if (i === numberOfBlocks - 1)
                 {
-                    localStorage[fileLocation] = krnSetValue(1, DEFAULT_TSB, tempData.toLowerCase());
+                    localStorage[fileLocation] = krnSetValue(1, DEFAULT_TSB, tempData.toLowerCase().trim());
                 }
                 else
                 {
-                    localStorage[fileLocation] = krnSetValue(1, nextBlock.replace(/[[\],]/g, ""), tempData.toLowerCase());
+                    localStorage[fileLocation] = krnSetValue(1, nextBlock.replace(/[[\],]/g, ""), tempData.toLowerCase().trim());
                 }
 
                 // Set the next block as the current file location
@@ -321,7 +326,7 @@ function krnListFiles() {
         keyValue = parseInt(keyValue);
 
         // Check to make sure that the key is in directory space
-        if (keyValue > 0 && keyValue < 78)
+        if (keyValue > 0 && keyValue < MAX_DIRECTORY_TSB)
         {
             // Get the first bit to check if it is occupied or not
             var value = JSON.parse(localStorage[i]);
@@ -350,7 +355,7 @@ function krnListFiles() {
 
 // Add tildes to the end of data both for display and as end of file markers
 function krnFillFreeSpace(data) {
-    for (var i = data.length; i < 60; i++) {
+    for (var i = data.length; i < (MAX_DATA - 1); i++) {
         data += "~";
     }
 
@@ -365,7 +370,7 @@ function krnGetNextOpenDirectory() {
         keyValue = parseInt(keyValue);
 
         // Check to make sure that the key is in directory space
-        if (keyValue > 0 && keyValue < 78)
+        if (keyValue > 0 && keyValue < MAX_DIRECTORY_TSB)
         {
             // Get the first bit to check if it is occupied or not
             var value = JSON.parse(localStorage[i]);
@@ -400,7 +405,7 @@ function krnGetNextOpenFile() {
         keyValue = parseInt(keyValue);
 
         // Check to make sure that the key is in directory space
-        if (keyValue > 99 && keyValue < 378)
+        if (keyValue > MIN_FILE_TSB && keyValue < MAX_FILE_TSB)
         {
             // Get the first bit to check if it is occupied or not
             var value = JSON.parse(localStorage[i]);
@@ -445,17 +450,17 @@ function krnCheckMBR () {
 function krnIncrementMBRValue() {
     _MBRLocation[2]++;
 
-    if (_MBRLocation[2] > 7)
+    if (_MBRLocation[2] > (BLOCK_SIZE - 1))
     {
         _MBRLocation[2] = 0
         _MBRLocation[1]++;
     }
-    else if (_MBRLocation[1] > 7)
+    else if (_MBRLocation[1] > (SECTOR_SIZE - 1))
     {
         _MBRLocation[1] = 0;
         _MBRLocation[0]++;
     }
-    else if (_MBRLocation[0] > 3)
+    else if (_MBRLocation[0] > (TRACK_SIZE - 1))
     {
         _MBRLocation[0] = 1;
         _MBRLocation[1] = 0;
@@ -491,4 +496,54 @@ function krnGetDirectoryFromFileName(fileName) {
 
     // If no key is found
     return null;
+}
+
+function krnDeleteAllLinkedBlocks(fileName) {
+    // Put the file name to lower case and trim any possible spaces
+    fileName = fileName.toLowerCase().trim();
+
+    // Get the directory data from the file name
+    var directoryLocation = krnGetDirectoryFromFileName(fileName);
+
+    // Get the data from the directory
+    var value = JSON.parse(localStorage[directoryLocation]);
+
+    // Get the track, sector, and block of the file location
+    var track = value[1];
+    var sector = value[2];
+    var block = value[3];
+
+    var fileLocation = JSON.stringify([track, sector, block]);
+
+    // Create an array to keep track of all the possible blocks
+    // Add the first block to the array and set it as the beginning key
+    var fileDataList = [fileLocation];
+    var key = fileLocation;
+
+    // While there are still blocks in the chain keep adding them
+    while (key != "[-1,-1,-1]") {
+        // Get the track, sector, and block from the file
+        var fileValue = JSON.parse(localStorage[key]);
+        var nextFileTrack = fileValue[1];
+        var nextFileSector = fileValue[2];
+        var nextFileBlock = fileValue[3];
+
+        // Get the next block in the chain
+        var nextFile = JSON.stringify([nextFileTrack, nextFileSector, nextFileBlock]);
+
+        // If there is a reference to another file add it to file data
+        if (nextFile != "[-1,-1,-1]")
+        {
+            fileDataList.push(nextFile);
+        }
+
+        // Make the key the next file
+        key = nextFile;
+    }
+
+    // Go through the file list and delete each block besides the first block because that is always allocated
+    // for the file
+    for (var i = 1; i < fileDataList.length; i++) {
+        localStorage[fileDataList[i]] = krnSetValue(0, DEFAULT_TSB, "");
+    }
 }

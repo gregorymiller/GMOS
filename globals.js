@@ -32,6 +32,10 @@ var SECTOR_SIZE = 8;
 var BLOCK_SIZE = 8;
 var MBR = "[0,0,0]";
 var DEFAULT_TSB = [-1,-1,-1];
+var MAX_DATA = 61;
+var MAX_FILE_TSB = 378;
+var MIN_FILE_TSB = 99;
+var MAX_DIRECTORY_TSB = 78;
 
 // PCB state
 var PROCESS_NEW     = 0;
