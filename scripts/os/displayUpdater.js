@@ -68,19 +68,12 @@ function updateReadyQueue() {
     // Go through the ready queue but only the first two because there are only two slots in the ready queue
     for (var i = 0; i < _ReadyQueue.getSize(); i++) {
         // If the ready queue element exists update the ready queue otherwise fill it with spaces
-        if ((_ReadyQueue.get(i) != null || _ReadyQueue.get(i) != undefined) && i < 2)
+        if ((_ReadyQueue.get(i) != null || _ReadyQueue.get(i) != undefined) && i < 4)
         {
             document.getElementById("RQ" + (i + 1) + "PID").innerHTML     = _ReadyQueue.get(i).pid.toString();
             document.getElementById("RQ" + (i + 1) + "State").innerHTML   = changeState(_ReadyQueue.get(i).state).toString();
             document.getElementById("RQ" + (i + 1) + "Base").innerHTML    = "0x" + _ReadyQueue.get(i).base.toString(16).toUpperCase();
             document.getElementById("RQ" + (i + 1) + "Limit").innerHTML   = "0x" + _ReadyQueue.get(i).limit.toString(16).toUpperCase();
-        }
-        else
-        {
-            document.getElementById("RQ" + (i + 1) + "PID").innerHTML     = "&nbsp;";
-            document.getElementById("RQ" + (i + 1) + "State").innerHTML   = "&nbsp;";
-            document.getElementById("RQ" + (i + 1) + "Base").innerHTML    = "&nbsp;";
-            document.getElementById("RQ" + (i + 1) + "Limit").innerHTML   = "&nbsp;";
         }
     }
 }
@@ -90,7 +83,7 @@ function clearReadyQueue() {
     var table = document.getElementById("readyQueue");
 
     // Update the rows with spaces to clear the table
-    for (var r = 1; r < 3; r++) {
+    for (var r = 1; r < 4; r++) {
         for (var c = 0; c < 4; c++) {
             table.rows[r].cells[c].innerHTML = "&nbsp;";
         }
@@ -118,6 +111,10 @@ function changeState(state) {
     else if (state === 4)
     {
         return "Terminated";
+    }
+    else if (state === 5)
+    {
+        return "On Disk";
     }
 }
 

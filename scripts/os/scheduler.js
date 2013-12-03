@@ -21,6 +21,18 @@ function Scheduler()
             // Get the next process in the queue
             _RunningProcess = _ReadyQueue.dequeue();
 
+            // If the process to be run is on the disk
+            if (_RunningProcess.limit === -1)
+            {
+                // If there are still processes in the ready queue and there are no unlocked sections roll out
+                // the last program in the ready queue
+                if ((!_ReadyQueue.isEmpty()) && (_MemoryManager.getNextUnlockedSection() === null))
+                {
+                    _MemoryManager.rollOut(_ReadyQueue.get(_ReadyQueue.getSize() - 1));
+                }
+                _MemoryManager.rollIn(_RunningProcess);
+            }
+
             // Clear and update the cpu with the process information
             _CPU.clearCPU();
             _CPU.update(_RunningProcess.pc, _RunningProcess.Acc, _RunningProcess.Xreg, _RunningProcess.Yreg,

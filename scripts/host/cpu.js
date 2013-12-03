@@ -46,6 +46,36 @@ function Cpu() {
         krnTrace("CPU cycle");
         // TODO: Accumulate CPU usage and profiling statistics here.
 
+        // Check to see if the current process is on disk in case it is run alone or the first process in runall
+        if (_RunningProcess.limit === -1)
+        {
+            // Only need to roll out a program if there are no open slots
+            if (_MemoryManager.getNextUnlockedSection() === null)
+            {
+                // If using runall just roll out the last program in the ready queue
+                if (!_ReadyQueue.isEmpty())
+                {
+                    _MemoryManager.rollOut(_ReadyQueue.get(_ReadyQueue.getSize() - 1));
+                }
+                // If using run just roll out a program in memory
+                else
+                {
+                    var tempProcess;
+
+                    // Find a process in the job list that isn't on the disk to roll out
+                    for (var i in _JobList) {
+                        if ((_JobList[i] != undefined || _JobList[i] != null) && (_JobList[i].limit != -1))
+                        {
+                            tempProcess = i;
+                        }
+                    }
+                    _MemoryManager.rollOut(_JobList[tempProcess]);
+                }
+                // Then roll in the running process
+                _MemoryManager.rollIn(_RunningProcess);
+            }
+        }
+
         // If the cycle count is bigger than the quantum then create a software interrupt to context switch
         if (_Cycle >= QUANTUM)
         {
@@ -151,6 +181,12 @@ function storeAccInMem() {
     {
         // Convert the dec ACC to hex for storage
         var hex = _CPU.Acc.toString(16).toUpperCase();
+
+        // If the hex number is only a single number add a zero to it
+        if (hex.length === 1)
+        {
+            hex = "0" + hex;
+        }
         _Memory[decAddr] = hex;
     }
     else
@@ -342,6 +378,12 @@ function incrementByteVal() {
         decimalForm++;
 
         var hexForm = decimalForm.toString(16).toUpperCase();
+
+        // If the hex number is only a single number add a zero to it
+        if (hexForm.length === 1)
+        {
+            hexForm = "0" + hexForm;
+        }
 
         _Memory[decAddr] = hexForm;
     }

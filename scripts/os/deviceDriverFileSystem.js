@@ -245,6 +245,8 @@ function krnRead(fileName) {
 
             // Replace all tildes with empty space so they won't be printed
             data += tempData.replace(/~/g, "");
+            // Add a space to the end of a file block so that instructions won't be grouped together
+            data += " ";
         }
 
         return data;
