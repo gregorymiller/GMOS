@@ -156,8 +156,6 @@ function krnWrite(fileName, data) {
 
             // Store the data in each block
             for (var i = 0; i < numberOfBlocks; i++) {
-                // Get the next block for reference in the current file block
-                var nextBlock = krnGetNextOpenFile();
 
                 // Get the data
                 var tempData = data.substring((i * (MAX_DATA - 1)), ((i + 1) * (MAX_DATA - 1)));
@@ -169,6 +167,11 @@ function krnWrite(fileName, data) {
                 }
                 else
                 {
+                    // Get the next block for reference in the current file block
+                    var nextBlock = krnGetNextOpenFile();
+                    // Occupy that block so that the file knows it will be writing to it
+                    localStorage[nextBlock] = krnSetValue(1, DEFAULT_TSB, "");
+
                     localStorage[fileLocation] = krnSetValue(1, nextBlock.replace(/[[\],]/g, ""), tempData.toLowerCase().trim());
                 }
 
@@ -355,7 +358,7 @@ function krnListFiles() {
 
 // Add tildes to the end of data both for display and as end of file markers
 function krnFillFreeSpace(data) {
-    for (var i = data.length; i < (MAX_DATA - 1); i++) {
+    for (var i = data.length; i < (MAX_DATA - 2); i++) {
         data += "~";
     }
 

@@ -137,5 +137,13 @@ function memoryManager()
     this.translateAddress = function(address) {
         return (address + _RunningProcess.base);
     };
+
+    this.rollIn = function() {
+
+    };
+
+    this.rollOut = function () {
+
+    };
 }
 

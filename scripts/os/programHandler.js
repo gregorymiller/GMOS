@@ -19,32 +19,79 @@ function loadProgram(txt) {
         return -1;
     }
 
-    // If not get a new PCB for the program
-    var process = newProcess();
-
-
-    // If the process is not null load the program into memory and add the process to the job list else return -1
-    if ( process )
+    // Check to know where the program will be loaded
+    if (_MemoryManager.getNextUnlockedSection() != null)
     {
-        // Load program into memory
-        _MemoryManager.loadMemorySection(process.section, txt);
+        // Get a new process
+        var process = newProcess();
 
-        // Change process state
-        process.state = PROCESS_LOADED;
+        // If the process is not null load the program into memory and add the process to the job list else return -1
+        if ( process )
+        {
+            // Load program into memory
+            _MemoryManager.loadMemorySection(process.section, txt);
 
-        // Update table with new memory
-        updateTable();
+            // Change process state
+            process.state = PROCESS_LOADED;
 
-        // Add the process to to the job list at the process's PID
-        _JobList[process.pid] = process;
+            // Update table with new memory
+            updateTable();
 
-        _StdOut.putText("Program loaded correctly");
-        _StdOut.advanceLine();
+            // Add the process to to the job list at the process's PID
+            _JobList[process.pid] = process;
 
-        // Change the state
-        process.state = PROCESS_READY;
+            _StdOut.putText("Program loaded correctly");
+            _StdOut.advanceLine();
 
-        return process.pid;
+            // Change the state
+            process.state = PROCESS_READY;
+
+            return process.pid;
+        }
+        else
+        {
+            return -1;
+        }
+    }
+    // There are no open memory sections so it will be loaded onto the disk
+    else if (_MemoryManager.getNextUnlockedSection() === null)
+    {
+        // Get a new process
+        var process = newProcess();
+
+        // If the process is not null load the program onto the disk and add the process to the job list else return -1
+        if ( process )
+        {
+            // Change process state
+            process.state = PROCESS_LOADED;
+
+            // Get the file name and program text because the data sent is in array form and the file system does
+            // not support it
+            var fileName = "pid: " + process.pid.toString();
+            var programText = document.getElementById("taProgramInput").value;
+
+            // Create the file and write the data to it
+            krnFileSystemDriver.create(fileName);
+            krnFileSystemDriver.write(fileName, programText);
+
+            // Change the state to know it is on the disk
+            process.state = PROCESS_ON_DISK;
+
+            // Update the display
+            updateFileSystemDisplay();
+
+            // Add the process to to the job list at the process's PID
+            _JobList[process.pid] = process;
+
+            _StdOut.putText("Program loaded correctly onto disk");
+            _StdOut.advanceLine();
+
+            return process.pid;
+        }
+        else
+        {
+            return -1;
+        }
     }
     else
     {
@@ -79,10 +126,12 @@ function newProcess() {
     }
     else
     {
-        _StdOut.putText("No open memory sections");
-        _StdOut.advanceLine();
-        _StdOut.putText("Program not loaded correctly");
-        _StdOut.advanceLine();
+        // This means it is on disk so give it placeholder variables
+        base = -1;
+        limit = -1;
+        section = -1;
+
+        return (new processControlBlock(state, pid, pc, base, limit, section));
     }
 
     return null;
