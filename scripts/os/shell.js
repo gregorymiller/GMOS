@@ -417,8 +417,13 @@ function shellInit() {
     sc.function = function(args) {
         if (args.length > 0)
         {
+            var fileName = "";
+            for (var i = 0; i < args.length; i++) {
+                fileName += args[i] + " ";
+            }
+
             // Create a file with the given file name and update the display
-            var createCheck = krnFileSystemDriver.create(args[0]);
+            var createCheck = krnFileSystemDriver.create(fileName);
 
             if (createCheck)
             {
@@ -444,7 +449,11 @@ function shellInit() {
     sc.function = function(args) {
         if (args.length > 0)
         {
-            var fileName = args[0];
+            var fileName = "";
+            for (var i = 0; i < args.length; i++) {
+                fileName += args[i] + " ";
+            }
+
             var data = "";
             for (var i = 1; i < args.length; i++) {
                 data += "" + args[i] + " ";
@@ -477,7 +486,10 @@ function shellInit() {
     sc.function = function(args) {
         if (args.length > 0)
         {
-            var fileName = args[0];
+            var fileName = "";
+            for (var i = 0; i < args.length; i++) {
+                fileName += args[i] + " ";
+            }
 
             // Get the data from the file name
             var readData = krnFileSystemDriver.read(fileName);
@@ -509,7 +521,10 @@ function shellInit() {
     sc.function = function(args) {
         if (args.length > 0)
         {
-            var fileName = args[0];
+            var fileName = "";
+            for (var i = 0; i < args.length; i++) {
+                fileName += args[i] + " ";
+            }
 
             // Delete a file with the given file name and update the display
             var deleteCheck = krnFileSystemDriver.delete(fileName);
