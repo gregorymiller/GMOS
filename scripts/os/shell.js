@@ -105,11 +105,22 @@ function shellInit() {
     sc = new ShellCommand();
     sc.command = "load";
     sc.description = "- loads user program.";
-    sc.function = function() {
+    sc.function = function(args) {
         var userProgram = document.getElementById("taProgramInput");
         var userText = userProgram.value;
 
         var pattern = /[^0-9a-fA-F\s]/;
+        var priority;
+
+        // If there is a priority given use it otherwise use a default -1
+        if (args.length > 0)
+        {
+            priority = parseInt(args[0]);
+        }
+        else
+        {
+            priority = -1;
+        }
 
         // If the pattern is found then it is not valid input otherwise load the program
         if (userText.search(pattern) != -1)
@@ -118,7 +129,7 @@ function shellInit() {
         }
         else
         {
-            var pid = loadProgram(userText);
+            var pid = loadProgram(userText, priority);
 
             _StdOut.putText("PID: " + pid);
         }
@@ -163,14 +174,47 @@ function shellInit() {
     sc.command = "runall";
     sc.description = "- runs all the programs in memory";
     sc.function = function() {
-        // For all the jobs in the job list put them in the ready queue and then begin executing
-        for (var i in _JobList) {
+        // If it is a priority schedule the programs must be loaded differently
+        if (_CPUSchedule === "PRIORITY")
+        {
+            // Create an array for the processes
+            var processes = [];
+            // Put all of the jobs in the process array and delete them from the job lis
+            for (var i in _JobList) {
 
-            if (_JobList[i] != undefined || _JobList[i] != null)
-            {
-                _ReadyQueue.enqueue(_JobList[i]);
+                if (_JobList[i] != undefined || _JobList[i] != null)
+                {
+                    processes.push(_JobList[i]);
+                    _JobList[i] = null;
+                }
+            }
 
-                _JobList[i] = null;
+            // Sort the processes by priority a lower number is a higher priority
+            processes.sort(function(a, b) {
+                if (a.priority < b.priority)
+                    return -1;
+                else
+                    return 1;
+                return 0;
+            });
+
+            // Then add them to the ready queue in order
+            for (var j in processes) {
+                _ReadyQueue.enqueue(processes[j]);
+            }
+        }
+        // Otherwise load the programs in the order that they were loaded
+        else
+        {
+            // For all the jobs in the job list put them in the ready queue and then begin executing
+            for (var i in _JobList) {
+
+                if (_JobList[i] != undefined || _JobList[i] != null)
+                {
+                    _ReadyQueue.enqueue(_JobList[i]);
+
+                    _JobList[i] = null;
+                }
             }
         }
 
@@ -249,7 +293,7 @@ function shellInit() {
     sc.function = function(args) {
         if (args.length > 0)
         {
-            QUANTUM = args;
+            QUANTUM = parseInt(args[0]);
         }
         else
         {
@@ -357,7 +401,16 @@ function shellInit() {
                 {
                     _StdOut.putText("PID " + pid.toString() + " killed");
 
-                    _MemoryManager.toggleMemorySection(_ReadyQueue.get(i).section);
+                    // If the process to be removed is on the disk delete it and update the file name
+                    if (_ReadyQueue.get(i).limit === -1)
+                    {
+                        krnFileSystemDriver.delete("pid: " + _ReadyQueue.get(i).pid.toString());
+                        updateFileSystemDisplay();
+                    }
+                    else
+                    {
+                        _MemoryManager.toggleMemorySection(_ReadyQueue.get(i).section);
+                    }
                     _ReadyQueue.remove(i);
 
                     removed = true;
@@ -571,6 +624,40 @@ function shellInit() {
         {
             _StdOut.putText("No files in memory");
         }
+    };
+    this.commandList[this.commandList.length] = sc;
+
+    // setschedule - set the cpu scheduling
+    sc = new ShellCommand();
+    sc.command = "setschedule";
+    sc.description = "- set the cpu scheduling [rr, fcfs, priority]";
+    sc.function = function(args) {
+        if (args.length > 0)
+        {
+            var schedule = args[0].toUpperCase();
+
+            if (schedule === "RR" || schedule === "FCFS" || schedule === "PRIORITY")
+            {
+                _CPUSchedule = schedule;
+            }
+            else
+            {
+                _StdOut.putText("Invalid schedule");
+            }
+        }
+        else
+        {
+            _StdOut.putText("Usage: setschedule <string>  Please supply a string.");
+        }
+    };
+    this.commandList[this.commandList.length] = sc;
+
+    // getschedule - set the cpu scheduling
+    sc = new ShellCommand();
+    sc.command = "getschedule";
+    sc.description = "- gets the cpu scheduling";
+    sc.function = function() {
+        _StdOut.putText("" + _CPUSchedule.toString());
     };
     this.commandList[this.commandList.length] = sc;
 

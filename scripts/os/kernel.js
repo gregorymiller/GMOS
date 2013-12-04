@@ -160,7 +160,6 @@ function krnInterruptHandler(irq, params)    // This is the Interrupt Handler Ro
             // Unlock the current section
             _MemoryManager.toggleMemorySection(_RunningProcess.section);
 
-
             // Stop the CPU and stop stepping
             _CPU.isExecuting = false;
             _CPU.isStepping = false;

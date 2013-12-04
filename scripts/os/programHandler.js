@@ -5,7 +5,7 @@
  ------------ */
 
 
-function loadProgram(txt) {
+function loadProgram(txt, priority) {
     // Retrieve the program text
     txt = txt.split(" ");
 
@@ -23,7 +23,7 @@ function loadProgram(txt) {
     if (_MemoryManager.getNextUnlockedSection() != null)
     {
         // Get a new process
-        var process = newProcess();
+        var process = newProcess(priority);
 
         // If the process is not null load the program into memory and add the process to the job list else return -1
         if ( process )
@@ -57,7 +57,7 @@ function loadProgram(txt) {
     else if (_MemoryManager.getNextUnlockedSection() === null)
     {
         // Get a new process
-        var process = newProcess();
+        var process = newProcess(priority);
 
         // If the process is not null load the program onto the disk and add the process to the job list else return -1
         if ( process )
@@ -99,7 +99,7 @@ function loadProgram(txt) {
     }
 }
 
-function newProcess() {
+function newProcess(priority) {
     var state = PROCESS_NEW;
     var pid = _PID++;
     var pc = 0;
@@ -122,7 +122,7 @@ function newProcess() {
         _MemoryManager.toggleMemorySection(section);
         _MemoryManager.clearMemorySection(section);
 
-        return (new processControlBlock(state, pid, pc, base, limit, section));
+        return (new processControlBlock(state, pid, pc, base, limit, section, priority));
     }
     else
     {
@@ -131,7 +131,7 @@ function newProcess() {
         limit = -1;
         section = -1;
 
-        return (new processControlBlock(state, pid, pc, base, limit, section));
+        return (new processControlBlock(state, pid, pc, base, limit, section, priority));
     }
 
     return null;

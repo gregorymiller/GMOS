@@ -76,12 +76,17 @@ function Cpu() {
             }
         }
 
-        // If the cycle count is bigger than the quantum then create a software interrupt to context switch
-        if (_Cycle >= QUANTUM)
+        // If the cpu schedule is round robin context switch otherwise just run programs to completion
+        if (_CPUSchedule === "RR")
         {
-            _KernelInterruptQueue.enqueue( new Interrupt(SWITCH_IRQ, -1) );
+            // If the cycle count is bigger than the quantum then create a software interrupt to context switch
+            if (_Cycle >= QUANTUM)
+            {
+                _KernelInterruptQueue.enqueue( new Interrupt(SWITCH_IRQ, -1) );
+            }
         }
 
+        // Make sure PC is in the memory space
         if (this.PC >= (PARTITION_SIZE - 1))
         {
             _KernelInterruptQueue.enqueue( new Interrupt(INVALID_MEM_IRQ, -1) );

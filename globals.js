@@ -58,6 +58,7 @@ var _Scheduler = null;
 // CPU globals
 var _CPU = null;
 var _Cycle = 0;
+var _CPUSchedule = "RR";
 
 // Memory globals
 var _Memory = null;

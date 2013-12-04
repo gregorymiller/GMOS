@@ -4,7 +4,7 @@
  Process Control Block prototype
  ------------ */
 
-function processControlBlock (state, pid, pc, base, limit, section)
+function processControlBlock (state, pid, pc, base, limit, section, priority)
 {
     this.state = state;
     this.pid = pid
@@ -12,6 +12,7 @@ function processControlBlock (state, pid, pc, base, limit, section)
     this.base = base;
     this.limit = limit;
     this.section = section;
+    this.priority = priority;
 
     this.Acc   = 0;
     this.Xreg  = 0;
