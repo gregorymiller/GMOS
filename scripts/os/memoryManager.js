@@ -171,7 +171,7 @@ function memoryManager()
         hostLog("Rolling in pid: " + process.pid + " to memory", "OS");
 
         // Get the file name
-        var fileName = "pid: " + process.pid.toString();
+        var fileName = "pid:" + process.pid.toString();
 
         // Get the data from the file and then put it in array form split on spaces
         var opCode = krnFileSystemDriver.read(fileName).toUpperCase().trim();
@@ -200,7 +200,7 @@ function memoryManager()
         hostLog("Rolling in pid: " + process.pid + " to file system", "OS");
 
         // Get the file name and retrieve the program from memory
-        var fileName = "pid: " + process.pid.toString();
+        var fileName = "pid:" + process.pid.toString();
         var opCodeArray = _MemoryManager.getMemoryFromMemorySection(process.section);
 
         // Unlock and clear the memory section

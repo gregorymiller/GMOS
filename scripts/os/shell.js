@@ -502,10 +502,7 @@ function shellInit() {
     sc.function = function(args) {
         if (args.length > 0)
         {
-            var fileName = "";
-            for (var i = 0; i < args.length; i++) {
-                fileName += args[i] + " ";
-            }
+            var fileName = args[0];
 
             var data = "";
             for (var i = 1; i < args.length; i++) {

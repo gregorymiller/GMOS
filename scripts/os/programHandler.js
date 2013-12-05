@@ -67,7 +67,7 @@ function loadProgram(txt, priority) {
 
             // Get the file name and program text because the data sent is in array form and the file system does
             // not support it
-            var fileName = "pid: " + process.pid.toString();
+            var fileName = "pid:" + process.pid.toString();
             var programText = document.getElementById("taProgramInput").value;
 
             // Create the file and write the data to it
