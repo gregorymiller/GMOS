@@ -12,7 +12,7 @@
 // Global CONSTANTS
 //
 var APP_NAME = "GMOS";  // Same here
-var APP_VERSION = "1.2";   // What did you expect?
+var APP_VERSION = "1.3";   // What did you expect?
 
 var CPU_CLOCK_INTERVAL = 100;   // This is in ms, or milliseconds, so 1000 = 1 second.
 

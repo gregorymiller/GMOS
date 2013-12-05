@@ -351,7 +351,7 @@ function shellInit() {
         _StdOut.putText("PID(s) ");
 
         // Print out the PIDs in memory
-        _StdOut.putText("in memory: ");
+        _StdOut.putText("in memory/disk: ");
         for (var i = 0; i < _JobList.length; i++) {
 
                 if (_JobList[i] != undefined || _JobList[i] != null)
